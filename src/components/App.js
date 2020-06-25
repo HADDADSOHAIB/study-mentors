@@ -121,6 +121,15 @@ function App() {
             <MenuIcon />
           </IconButton>
         </div>
+        <div className={classes.body}>
+          <div className={classes.bodyHeader}>
+            <h1 className={classes.marginBottomNone}>FIND A TEACHER</h1>
+            <p className={classes.marginTopNone}>There are here for you</p>
+          </div>
+          <div>
+            <p>Placeholder</p>
+          </div>
+        </div>
       </main>
     </div>
   );

@@ -70,4 +70,22 @@ export default makeStyles(theme => ({
     margin: 5,
     fontFamily: 'Pacifico',
   },
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    minHeight: '100vh',
+  },
+  bodyHeader: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  marginBottomNone: {
+    marginBottom: theme.spacing(1),
+  },
+  marginTopNone: {
+    marginTop: theme.spacing(1),
+  },
 }));
