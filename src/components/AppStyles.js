@@ -12,16 +12,6 @@ export default makeStyles(theme => ({
   hide: {
     display: 'none',
   },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
   drawerHeader: {
     display: 'flex',
     alignItems: 'center',
@@ -45,31 +35,6 @@ export default makeStyles(theme => ({
     }),
     marginLeft: 0,
   },
-  socialMedia: {
-    display: 'flex',
-    justifyContent: 'space-evenly',
-  },
-  footer: {
-    textAlign: 'center',
-  },
-  p: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  item: {
-    '&:hover': {
-      color: '#eee',
-      backgroundColor: '#0dd42b',
-    },
-  },
-  itemText: {
-    fontWeight: '900',
-    fontSize: '1.2rem',
-  },
-  title: {
-    margin: 5,
-    fontFamily: 'Pacifico',
-  },
   body: {
     display: 'flex',
     flexDirection: 'column',
@@ -87,5 +52,10 @@ export default makeStyles(theme => ({
   },
   marginTopNone: {
     marginTop: theme.spacing(1),
+  },
+  flash: {
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'center',
   },
 }));
