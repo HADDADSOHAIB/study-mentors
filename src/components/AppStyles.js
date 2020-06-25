@@ -8,18 +8,15 @@ export default makeStyles(theme => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
+    position: 'absolute',
+    top: '0px',
+    left: '5px',
   },
   hide: {
     display: 'none',
   },
-  drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    minHeight: 20,
-    justifyContent: 'space-between',
-  },
   content: {
+    position: 'relative',
     flexGrow: 1,
     padding: theme.spacing(1),
     transition: theme.transitions.create('margin', {
@@ -34,24 +31,6 @@ export default makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginLeft: 0,
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    minHeight: '100vh',
-  },
-  bodyHeader: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  marginBottomNone: {
-    marginBottom: theme.spacing(1),
-  },
-  marginTopNone: {
-    marginTop: theme.spacing(1),
   },
   flash: {
     flexGrow: 1,

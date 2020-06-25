@@ -8,6 +8,7 @@ import useStyles from './AppStyles';
 import { openDrawer } from '../actions/layoutCreators';
 import DrawerApp from './DrawerApp';
 import Flash from './Flash';
+import MainPage from '../pages/MainPage';
 
 function App({ openDrawer, open }) {
   const classes = useStyles();
@@ -20,28 +21,18 @@ function App({ openDrawer, open }) {
           [classes.contentShift]: open,
         })}
       >
-        <div className={classes.drawerHeader}>
-          <IconButton
-            color="inherit"
-            onClick={openDrawer}
-            edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <div className={classes.flash}>
-            <Flash />
-          </div>
+        <IconButton
+          color="inherit"
+          onClick={openDrawer}
+          edge="start"
+          className={clsx(classes.menuButton, open && classes.hide)}
+        >
+          <MenuIcon />
+        </IconButton>
+        <div className={classes.flash}>
+          <Flash />
         </div>
-        <div className={classes.body}>
-          <div className={classes.bodyHeader}>
-            <h1 className={classes.marginBottomNone}>FIND A TEACHER</h1>
-            <p className={classes.marginTopNone}>There are here for you</p>
-          </div>
-          <div>
-            <p>Placeholder</p>
-          </div>
-        </div>
+        <MainPage />
       </main>
     </div>
   );
