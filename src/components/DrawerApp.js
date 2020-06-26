@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import TwitterIcon from '@material-ui/icons/Twitter';
@@ -6,6 +7,7 @@ import FacebookIcon from '@material-ui/icons/Facebook';
 import PinterestIcon from '@material-ui/icons/Pinterest';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+import { withRouter } from 'react-router';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -23,8 +25,15 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import useStyles from './DrawerAppStyles';
 import { closeDrawer } from '../actions/layoutCreators';
+import { selectCategory } from '../actions/teacherCreators';
 
-function DrawerApp({ closeDrawer, open }) {
+function DrawerApp({
+  closeDrawer,
+  open,
+  category,
+  location,
+  selectCategory,
+}) {
   const classes = useStyles();
   const theme = useTheme();
   return (
@@ -46,22 +55,38 @@ function DrawerApp({ closeDrawer, open }) {
       </div>
       <List>
         <Divider />
-        <ListItem button classes={{ root: classes.item }}>
+        <ListItem
+          button
+          classes={{ root: clsx(classes.item, category === 'Maths' && location.pathname === '/' && classes.selected) }}
+          onClick={() => selectCategory('Maths')}
+        >
           <ListItemIcon><FunctionsIcon /></ListItemIcon>
           <ListItemText primary="MATHS" classes={{ primary: classes.itemText }} />
         </ListItem>
         <Divider />
-        <ListItem button classes={{ root: classes.item }}>
+        <ListItem
+          button
+          classes={{ root: clsx(classes.item, category === 'Physics' && location.pathname === '/' && classes.selected) }}
+          onClick={() => selectCategory('Physics')}
+        >
           <ListItemIcon><ExploreIcon /></ListItemIcon>
           <ListItemText primary="PHYSICS" classes={{ primary: classes.itemText }} />
         </ListItem>
         <Divider />
-        <ListItem button classes={{ root: classes.item }}>
+        <ListItem
+          button
+          classes={{ root: clsx(classes.item, category === 'Arts' && location.pathname === '/' && classes.selected) }}
+          onClick={() => selectCategory('Arts')}
+        >
           <ListItemIcon><LocalBarIcon /></ListItemIcon>
           <ListItemText primary="ARTS" classes={{ primary: classes.itemText }} />
         </ListItem>
         <Divider />
-        <ListItem button classes={{ root: classes.item }}>
+        <ListItem
+          button
+          classes={{ root: clsx(classes.item, category === 'English' && location.pathname === '/' && classes.selected) }}
+          onClick={() => selectCategory('English')}
+        >
           <ListItemIcon><TranslateIcon /></ListItemIcon>
           <ListItemText primary="ENGLISH" classes={{ primary: classes.itemText }} />
         </ListItem>
@@ -100,14 +125,21 @@ function DrawerApp({ closeDrawer, open }) {
 DrawerApp.propTypes = {
   closeDrawer: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
+  category: PropTypes.string.isRequired,
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
+  selectCategory: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
   closeDrawer: () => dispatch(closeDrawer()),
+  selectCategory: category => dispatch(selectCategory(category)),
 });
 
 const mapStateToProps = state => ({
   open: state.layout.drawer.open,
+  category: state.teacher.selectedCategory,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(DrawerApp);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(DrawerApp));

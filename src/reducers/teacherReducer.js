@@ -2,6 +2,7 @@ import {
   INCREASE_SELECTED_INDEX,
   DECREASE_SELECTED_INDEX,
   INCREASE_FETCHED_DATA_COUNT,
+  SELECT_CATEGORY,
 } from '../actions/teacherTypes';
 
 const INITIAL_STATE = {
@@ -15,6 +16,11 @@ const teacherReducer = (state = INITIAL_STATE, action) => {
   const { payload } = action;
 
   switch (action.type) {
+    case SELECT_CATEGORY:
+      return {
+        ...state,
+        selectedCategory: payload.category,
+      };
     case INCREASE_SELECTED_INDEX:
       return {
         ...state,

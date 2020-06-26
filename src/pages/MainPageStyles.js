@@ -46,6 +46,7 @@ export default makeStyles(theme => ({
     flexGrow: 2,
     display: 'flex',
     justifyContent: 'center',
+    minWidth: 345,
   },
   nextButtonContainer: {
     height: '50%',
@@ -53,11 +54,25 @@ export default makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
+  numberContainer: {
+    height: '50%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingRight: '10px',
+  },
   nextButton: {
     color: '#eee',
     backgroundColor: '#0dd42b',
     '&:hover': {
       color: '#111',
     },
+  },
+  moreContainer: {
+    height: '50%',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingLeft: '10px',
   },
 }));

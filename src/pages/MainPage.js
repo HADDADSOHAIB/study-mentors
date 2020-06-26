@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
 import Slide from '@material-ui/core/Slide';
-import Fade from '@material-ui/core/Fade';
+import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import useStyles from './MainPageStyles';
 import TeacherCard from '../components/TeacherCard';
@@ -48,8 +48,19 @@ function MainPage({ profils, selectedProfilIndex, increaseSelectedIndex, decreas
       <div className={classes.teachers}>
         <div className={classes.next}>
           <div className={classes.nextButtonContainer}>
-            <IconButton className={classes.nextButton} onClick={clickLeft}>
-              <ArrowBackOutlinedIcon fontSize="large" />
+            {
+              selectedProfilIndex !== 0 && (
+                <IconButton className={classes.nextButton} onClick={clickLeft}>
+                  <ArrowBackOutlinedIcon fontSize="large" />
+                </IconButton>
+              )
+            }
+          </div>
+          <div className={classes.numberContainer}>
+            <IconButton className={classes.nextButton}>
+              {selectedProfilIndex + 1}
+              /
+              { profils.length }
             </IconButton>
           </div>
         </div>
@@ -68,9 +79,22 @@ function MainPage({ profils, selectedProfilIndex, increaseSelectedIndex, decreas
         </div>
         <div className={classes.next}>
           <div className={classes.nextButtonContainer}>
-            <IconButton className={classes.nextButton} onClick={clickRight}>
-              <ArrowForwardOutlinedIcon fontSize="large" />
-            </IconButton>
+            {
+              selectedProfilIndex + 1 !== profils.length && (
+                <IconButton className={classes.nextButton} onClick={clickRight}>
+                  <ArrowForwardOutlinedIcon fontSize="large" />
+                </IconButton>
+              )
+            }
+          </div>
+          <div className={classes.moreContainer}>
+            {
+              selectedProfilIndex + 1 === profils.length && (
+                <Button className={classes.nextButton}>
+                  Load More
+                </Button>
+              )
+            }
           </div>
         </div>
       </div>

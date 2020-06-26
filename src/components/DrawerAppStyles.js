@@ -37,6 +37,10 @@ export default makeStyles(theme => ({
       backgroundColor: '#0dd42b',
     },
   },
+  selected: {
+    color: '#eee',
+    backgroundColor: '#0dd42b',
+  },
   itemText: {
     fontWeight: '900',
     fontSize: '1.2rem',

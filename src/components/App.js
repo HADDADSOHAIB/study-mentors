@@ -4,6 +4,10 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {
+  Switch,
+  Route,
+} from 'react-router-dom';
 import useStyles from './AppStyles';
 import { openDrawer } from '../actions/layoutCreators';
 import DrawerApp from './DrawerApp';
@@ -32,7 +36,9 @@ function App({ openDrawer, open }) {
         <div className={classes.flash}>
           <Flash />
         </div>
-        <MainPage />
+        <Switch>
+          <Route path="/" component={MainPage} />
+        </Switch>
       </main>
     </div>
   );
