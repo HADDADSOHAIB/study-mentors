@@ -6,7 +6,19 @@ import {
 } from '../actions/teacherTypes';
 
 const INITIAL_STATE = {
-  profils: [{ name: 'test 1' }, { name: 'test 2' }, { name: 'test 3' }, { name: 'test 4' }, { name: 'test 5' }, { name: 'test 6' }],
+  profils: [
+    {
+      name: 'test 1',
+      Bio: 'I am a teacher, I can help you',
+      WhatICanDo: 'I can help you in your Math',
+      fee: '20$',
+    },
+    { name: 'test 2' },
+    { name: 'test 3' },
+    { name: 'test 4' },
+    { name: 'test 5' },
+    { name: 'test 6' },
+  ],
   selectedCategory: 'Maths',
   selectedProfilIndex: 0,
   fetchedDataCount: 20,
