@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -36,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TeacherCard() {
+const TeacherCard = ({ name }) => {
   const classes = useStyles();
 
   return (
@@ -56,7 +57,7 @@ export default function TeacherCard() {
             </IconButton>
           )
         }
-        title="Shrimp and Chorizo Paella"
+        title={name}
         subheader="September 14, 2016"
       />
       <CardMedia
@@ -80,4 +81,10 @@ export default function TeacherCard() {
       </CardActions>
     </Card>
   );
-}
+};
+
+TeacherCard.propTypes = {
+  name: PropTypes.string.isRequired,
+};
+
+export default TeacherCard;

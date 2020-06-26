@@ -26,5 +26,38 @@ export default makeStyles(theme => ({
     zIndex: 1,
     position: 'relative',
     margin: theme.spacing(1),
+    width: 'fit-content',
+  },
+  teachers: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    flexGrow: 1,
+    position: 'relative',
+  },
+  teacherContainer: {
+    position: 'absolute',
+    top: 0,
+  },
+  next: {
+    flexGrow: 1,
+  },
+  teacher: {
+    flexGrow: 2,
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  nextButtonContainer: {
+    height: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  nextButton: {
+    color: '#eee',
+    backgroundColor: '#0dd42b',
+    '&:hover': {
+      color: '#111',
+    },
   },
 }));

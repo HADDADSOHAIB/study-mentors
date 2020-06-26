@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
+import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
 import Slide from '@material-ui/core/Slide';
+import Fade from '@material-ui/core/Fade';
 import Paper from '@material-ui/core/Paper';
 import useStyles from './MainPageStyles';
 import TeacherCard from '../components/TeacherCard';
+import { increaseSelectedIndex, decreaseSelectedIndex } from '../actions/teacherCreators';
 
-function MainPage() {
+function MainPage({ profils, selectedProfilIndex, increaseSelectedIndex, decreaseSelectedIndex }) {
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
-  const handleChange = () => {
-    setChecked((prev) => !prev);
+  const [show, setShow] = useState([]);
+  const [direction, setDirection] = useState('right');
+
+  useEffect(() => {
+    const newShow = [];
+    for (let i = 0; i < profils.length; i += 1) {
+      newShow.push(false);
+    }
+    newShow[selectedProfilIndex] = true;
+    setShow(newShow);
+    return () => '';
+  }, [profils, selectedProfilIndex]);
+
+  const clickRight = () => {
+    setDirection('left');
+    increaseSelectedIndex();
+  };
+
+  const clickLeft = () => {
+    setDirection('right');
+    decreaseSelectedIndex();
   };
 
   return (
@@ -21,17 +44,55 @@ function MainPage() {
           FIND A TEACHER
         </h1>
         <p className={classes.marginTopNone}>They are here for you</p>
-        <button onClick={handleChange} type="button">ok</button>
       </div>
-      <div>
-        <Slide direction="left" in={checked} mountOnEnter unmountOnExit>
-          <Paper elevation={4} className={classes.paper}>
-            <TeacherCard />
-          </Paper>
-        </Slide>
+      <div className={classes.teachers}>
+        <div className={classes.next}>
+          <div className={classes.nextButtonContainer}>
+            <IconButton className={classes.nextButton} onClick={clickLeft}>
+              <ArrowBackOutlinedIcon fontSize="large" />
+            </IconButton>
+          </div>
+        </div>
+        <div className={classes.teacher}>
+          <div className={classes.teacherContainer}>
+            {
+              profils.map((profil, i) => (
+                <Slide key={i} direction={direction} in={show[i]} mountOnEnter unmountOnExit timeout={{ enter: 500 }}>
+                  <Paper elevation={4} className={classes.paper}>
+                    <TeacherCard name={profil.name} />
+                  </Paper>
+                </Slide>
+              ))
+            }
+          </div>
+        </div>
+        <div className={classes.next}>
+          <div className={classes.nextButtonContainer}>
+            <IconButton className={classes.nextButton} onClick={clickRight}>
+              <ArrowForwardOutlinedIcon fontSize="large" />
+            </IconButton>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export default MainPage;
+MainPage.propTypes = {
+  profils: PropTypes.shape([]).isRequired,
+  selectedProfilIndex: PropTypes.string.isRequired,
+  increaseSelectedIndex: PropTypes.func.isRequired,
+  decreaseSelectedIndex: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => ({
+  profils: state.teacher.profils,
+  selectedProfilIndex: state.teacher.selectedProfilIndex,
+});
+
+const mapDispatchToProps = dispatch => ({
+  increaseSelectedIndex: () => dispatch(increaseSelectedIndex()),
+  decreaseSelectedIndex: () => dispatch(decreaseSelectedIndex()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainPage);
