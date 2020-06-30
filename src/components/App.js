@@ -13,6 +13,8 @@ import { openDrawer } from '../actions/layoutCreators';
 import DrawerApp from './DrawerApp';
 import Flash from './Flash';
 import MainPage from '../pages/MainPage';
+import SignupPage from '../pages/SignupPage';
+import SigninPage from '../pages/SigninPage';
 
 function App({ openDrawer, open }) {
   const classes = useStyles();
@@ -37,6 +39,8 @@ function App({ openDrawer, open }) {
           <Flash />
         </div>
         <Switch>
+          <Route path="/signup" component={SignupPage} />
+          <Route path="/signin" component={SigninPage} />
           <Route path="/" component={MainPage} />
         </Switch>
       </main>
