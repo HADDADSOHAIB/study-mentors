@@ -1,6 +1,7 @@
 import {
   SET_USER,
   CLEAR_USER,
+  SET_SCHEDULE,
 } from '../actions/authTypes';
 
 const INITIAL_STATE = {
@@ -22,6 +23,14 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return {
         currentUser: null,
         accountType: null,
+      };
+    case SET_SCHEDULE:
+      return {
+        ...state,
+        currentUser: {
+          ...state.currentUser,
+          schedule: payload.schedule,
+        },
       };
     default:
       return {

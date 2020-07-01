@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import useStyles from './ProfilPageStyles';
 import StudentProfil from '../components/StudentProfil';
 import TeacherProfil from '../components/TeacherProfil';
+import TeacherSchedule from '../components/TeacherSchedule';
 
 const ProfilePage = ({ currentUser, accountType }) => {
   const classes = useStyles();
@@ -14,7 +15,10 @@ const ProfilePage = ({ currentUser, accountType }) => {
         <StudentProfil />
       ) : ''}
       { currentUser && accountType === 'Teacher' ? (
-        <TeacherProfil />
+        <div>
+          <TeacherProfil />
+          <TeacherSchedule />
+        </div>
       ) : ''}
     </div>
   );
