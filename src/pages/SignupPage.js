@@ -47,7 +47,7 @@ const Signup = ({ history, setFlash, setUser }) => {
         fullname,
         password,
       },
-      account_type: value === 0 ? 'teacher' : 'student',
+      account_type: value === 0 ? 'Teacher' : 'Student',
     }).then(res => {
       localStorage.setItem('token_auth', res.data.access);
       history.push('/');
@@ -58,7 +58,7 @@ const Signup = ({ history, setFlash, setUser }) => {
       });
       setUser(
         res.data.current_user,
-        value === 0 ? 'teacher' : 'student',
+        value === 0 ? 'Teacher' : 'Student',
       );
     }).catch(() => {
       setFlash({

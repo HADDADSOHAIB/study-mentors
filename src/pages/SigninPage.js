@@ -36,9 +36,9 @@ const Signin = ({ history, setFlash, setUser }) => {
     axios.post(`${BACKEND}/api/v1/login`, {
       email,
       password,
-      account_type: value === 0 ? 'teacher' : 'student',
+      account_type: value === 0 ? 'Teacher' : 'Student',
     }).then(res => {
-      localStorage.setItem('token_auth', res.data.auth);
+      localStorage.setItem('token_auth', res.data.access);
       history.push('/');
       setFlash({
         message: 'Signed In successfully',
@@ -47,7 +47,7 @@ const Signin = ({ history, setFlash, setUser }) => {
       });
       setUser(
         res.data.current_user,
-        value === 0 ? 'teacher' : 'student',
+        value === 0 ? 'Teacher' : 'Student',
       );
     }).catch(err => {
       if (err.response.data && err.response.data.message) {

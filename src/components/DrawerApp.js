@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -23,19 +23,47 @@ import PersonIcon from '@material-ui/icons/Person';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import BACKEND from '../backend';
+import authHeader from '../authHeader';
 import useStyles from './DrawerAppStyles';
 import { closeDrawer } from '../actions/layoutCreators';
 import { selectCategory } from '../actions/teacherCreators';
+import { setUser, clearUser } from '../actions/authCreators';
 
 function DrawerApp({
   closeDrawer,
   open,
   category,
   location,
+  history,
   selectCategory,
+  setUser,
+  clearUser,
+  currentUser,
 }) {
   const classes = useStyles();
   const theme = useTheme();
+
+  const handleCategorySelection = category => {
+    selectCategory(category);
+    if (location.pathname !== '/') {
+      history.push('/');
+    }
+  };
+
+  useEffect(() => {
+    axios.get(`${BACKEND}/api/v1/get_user_by_token`, { headers: authHeader })
+      .then(res => {
+        setUser(
+          res.data.current_user,
+          res.data.account_type,
+        );
+      })
+      .catch(() => clearUser);
+    return () => '';
+  }, []);
+
   return (
     <Drawer
       className={classes.drawer}
@@ -58,7 +86,7 @@ function DrawerApp({
         <ListItem
           button
           classes={{ root: clsx(classes.item, category === 'Maths' && location.pathname === '/' && classes.selected) }}
-          onClick={() => selectCategory('Maths')}
+          onClick={() => handleCategorySelection('Maths')}
         >
           <ListItemIcon><FunctionsIcon /></ListItemIcon>
           <ListItemText primary="MATHS" classes={{ primary: classes.itemText }} />
@@ -67,7 +95,7 @@ function DrawerApp({
         <ListItem
           button
           classes={{ root: clsx(classes.item, category === 'Physics' && location.pathname === '/' && classes.selected) }}
-          onClick={() => selectCategory('Physics')}
+          onClick={() => handleCategorySelection('Physics')}
         >
           <ListItemIcon><ExploreIcon /></ListItemIcon>
           <ListItemText primary="PHYSICS" classes={{ primary: classes.itemText }} />
@@ -76,7 +104,7 @@ function DrawerApp({
         <ListItem
           button
           classes={{ root: clsx(classes.item, category === 'Arts' && location.pathname === '/' && classes.selected) }}
-          onClick={() => selectCategory('Arts')}
+          onClick={() => handleCategorySelection('Arts')}
         >
           <ListItemIcon><LocalBarIcon /></ListItemIcon>
           <ListItemText primary="ARTS" classes={{ primary: classes.itemText }} />
@@ -85,27 +113,50 @@ function DrawerApp({
         <ListItem
           button
           classes={{ root: clsx(classes.item, category === 'English' && location.pathname === '/' && classes.selected) }}
-          onClick={() => selectCategory('English')}
+          onClick={() => handleCategorySelection('English')}
         >
           <ListItemIcon><TranslateIcon /></ListItemIcon>
           <ListItemText primary="ENGLISH" classes={{ primary: classes.itemText }} />
         </ListItem>
         <Divider />
       </List>
-
-      <List>
-        <Divider />
-        <ListItem button classes={{ root: classes.item }}>
-          <ListItemIcon><PersonIcon /></ListItemIcon>
-          <ListItemText primary="PROFIL" classes={{ primary: classes.itemText }} />
-        </ListItem>
-        <Divider />
-        <ListItem button classes={{ root: classes.item }}>
-          <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
-          <ListItemText primary="SECHDULE" classes={{ primary: classes.itemText }} />
-        </ListItem>
-        <Divider />
-      </List>
+      { currentUser ? (
+        <List>
+          <Divider />
+          <ListItem button classes={{ root: classes.item }}>
+            <ListItemIcon><PersonIcon /></ListItemIcon>
+            <ListItemText primary="PROFIL" classes={{ primary: classes.itemText }} />
+          </ListItem>
+          <Divider />
+          <ListItem button classes={{ root: classes.item }}>
+            <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
+            <ListItemText primary="BOOKINGS" classes={{ primary: classes.itemText }} />
+          </ListItem>
+          <Divider />
+        </List>
+      ) : (
+        <List>
+          <Divider />
+          <ListItem
+            button
+            classes={{ root: clsx(classes.item, location.pathname === '/signin' && classes.selected) }}
+            onClick={() => history.push('signin')}
+          >
+            <ListItemIcon><PersonIcon /></ListItemIcon>
+            <ListItemText primary="Sign In" classes={{ primary: classes.itemText }} />
+          </ListItem>
+          <Divider />
+          <ListItem
+            button
+            classes={{ root: clsx(classes.item, location.pathname === '/signup' && classes.selected) }}
+            onClick={() => history.push('signup')}
+          >
+            <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
+            <ListItemText primary="Sign Up" classes={{ primary: classes.itemText }} />
+          </ListItem>
+          <Divider />
+        </List>
+      )}
       <div>
         <div className={classes.socialMedia}>
           <TwitterIcon />
@@ -130,16 +181,23 @@ DrawerApp.propTypes = {
     pathname: PropTypes.string.isRequired,
   }).isRequired,
   selectCategory: PropTypes.func.isRequired,
+  clearUser: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
+  currentUser: PropTypes.shape({}).isRequired,
+  history: PropTypes.shape([]).isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
   closeDrawer: () => dispatch(closeDrawer()),
   selectCategory: category => dispatch(selectCategory(category)),
+  clearUser: () => dispatch(clearUser()),
+  setUser: (currentUser, accountType) => dispatch(setUser(currentUser, accountType)),
 });
 
 const mapStateToProps = state => ({
   open: state.layout.drawer.open,
   category: state.teacher.selectedCategory,
+  currentUser: state.auth.currentUser,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(DrawerApp));

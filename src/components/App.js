@@ -15,6 +15,7 @@ import Flash from './Flash';
 import MainPage from '../pages/MainPage';
 import SignupPage from '../pages/SignupPage';
 import SigninPage from '../pages/SigninPage';
+import ProfilPage from '../pages/ProfilPage';
 
 function App({ openDrawer, open }) {
   const classes = useStyles();
@@ -39,6 +40,7 @@ function App({ openDrawer, open }) {
           <Flash />
         </div>
         <Switch>
+          <Route path="/profil" component={ProfilPage} />
           <Route path="/signup" component={SignupPage} />
           <Route path="/signin" component={SigninPage} />
           <Route path="/" component={MainPage} />
