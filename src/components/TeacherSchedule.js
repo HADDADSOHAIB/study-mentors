@@ -15,8 +15,10 @@ import Button from '@material-ui/core/Button';
 import useStyles from './TeacherScheduleStyles';
 import ScheduleDetails from './ScheduleDetails';
 import { setSchedule } from '../actions/authCreators';
+import { setFlash } from '../actions/layoutCreators';
+import { lessThen, biggerThen } from '../utils/dateCompare';
 
-const TeacherSchedule = ({ currentUser, setSchedule }) => {
+const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
   const classes = useStyles();
 
   const [newSessionType, setNewSessionType] = useState('');
@@ -33,8 +35,8 @@ const TeacherSchedule = ({ currentUser, setSchedule }) => {
   };
 
   const [day, setDay] = useState('');
-  const [from, setFrom] = useState(null);
-  const [to, setTo] = useState(null);
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
   const [newSchedule, setNewSchedule] = useState(currentUser.schedule);
 
   const handleDayChange = e => setDay(e.target.value);
@@ -43,20 +45,47 @@ const TeacherSchedule = ({ currentUser, setSchedule }) => {
 
   const handleAddSchedule = () => {
     let currentSchedule = newSchedule;
-    if (currentSchedule && currentSchedule[day]) {
-      currentSchedule[day].push(`${from}-${to}`);
-    } else if (currentSchedule && !currentSchedule[day]) {
-      currentSchedule[day] = [`${from}-${to}`];
-    } else if (!currentSchedule) {
-      currentSchedule = {
-        [day]: [`${from}-${to}`],
-      };
+    if (!day) {
+      setFlash({
+        severity: 'warning',
+        message: 'select a day first',
+        open: true,
+      });
+    } else if (!to.match(/^\d\d:\d\d$/) || !to.match(/^\d\d:\d\d$/)) {
+      setFlash({
+        severity: 'warning',
+        message: 'The to and from fields should be hours, ex: 14:00, 17:00',
+        open: true,
+      });
+    } else {
+      if (currentSchedule && !currentSchedule[day]) {
+        currentSchedule[day] = [`${from}-${to}`];
+      } else if (!currentSchedule) {
+        currentSchedule = {
+          [day]: [`${from}-${to}`],
+        };
+      } else if (currentSchedule && currentSchedule[day]) {
+        const overlappedSessions = currentSchedule[day].filter(session => {
+          const [sessionFrom, sessionTo] = session.split('-');
+          return (lessThen(sessionFrom, from) && biggerThen(sessionTo, from))
+            || (lessThen(sessionFrom, to) && biggerThen(sessionTo, to));
+        });
+        if (overlappedSessions.length) {
+          setFlash({
+            severity: 'warning',
+            message: 'There is an existing session that overlaps the chosen times',
+            open: true,
+          });
+        } else {
+          currentSchedule[day].push(`${from}-${to}`);
+        }
+      }
+      setNewSchedule(currentSchedule);
+      setSchedule(currentSchedule);
+      setFrom('');
+      setTo('');
+      setDay('');
     }
-    setNewSchedule(currentSchedule);
-    setSchedule(currentSchedule);
-    setFrom('');
-    setTo('');
-    setDay('');
   };
 
   return (
@@ -150,6 +179,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setSchedule: schedule => dispatch(setSchedule(schedule)),
+  setFlash: flash => dispatch(setFlash(flash)),
 });
 
 TeacherSchedule.propTypes = {
@@ -158,6 +188,7 @@ TeacherSchedule.propTypes = {
     session_type: PropTypes.string,
   }).isRequired,
   setSchedule: PropTypes.func.isRequired,
+  setFlash: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeacherSchedule);

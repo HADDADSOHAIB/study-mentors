@@ -123,7 +123,11 @@ function DrawerApp({
       { currentUser ? (
         <List>
           <Divider />
-          <ListItem button classes={{ root: classes.item }}>
+          <ListItem
+            button
+            classes={{ root: clsx(classes.item, location.pathname === '/profil' && classes.selected) }}
+            onClick={() => history.push('profil')}
+          >
             <ListItemIcon><PersonIcon /></ListItemIcon>
             <ListItemText primary="PROFIL" classes={{ primary: classes.itemText }} />
           </ListItem>

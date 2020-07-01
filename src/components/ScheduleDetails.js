@@ -58,11 +58,12 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
         </div>
         <div className={classes.chips}>
           {
-            schedule.wednesday && schedule.wednesday.length ? schedule.wednesday.map((session, i) => (
-              <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('wednesday', i)} color="primary" variant="outlined" classes={{ root: classes.chip }} />
-            )) : (
-              <p className={classes.chip}>no schedule is set for this day</p>
-            )
+            schedule.wednesday && schedule.wednesday.length
+              ? schedule.wednesday.map((session, i) => (
+                <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('wednesday', i)} color="primary" variant="outlined" classes={{ root: classes.chip }} />
+              )) : (
+                <p className={classes.chip}>no schedule is set for this day</p>
+              )
           }
         </div>
       </div>

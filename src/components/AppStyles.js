@@ -33,8 +33,11 @@ export default makeStyles(theme => ({
     marginLeft: 0,
   },
   flash: {
-    flexGrow: 1,
+    width: '40vw',
     display: 'flex',
     justifyContent: 'center',
+    position: 'fixed',
+    top: '5px',
+    zIndex: 5,
   },
 }));
