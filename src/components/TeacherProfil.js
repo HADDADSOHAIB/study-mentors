@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import Card from '@material-ui/core/Card';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { useForm } from 'react-hook-form';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import useStyles from './TeacherProfilStyles';
+import authHeader from '../authHeader';
+import BACKEND from '../backend';
+import { setFlash } from '../actions/layoutCreators';
 
-const TeacherProfil = ({ currentUser }) => {
+const TeacherProfil = ({ currentUser, setFlash }) => {
   const classes = useStyles();
   const {
     register,
@@ -18,7 +24,12 @@ const TeacherProfil = ({ currentUser }) => {
   } = useForm();
 
   const onSubmit = data => {
-    console.log(data);
+    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_profil`, {
+      ...data,
+      what_I_can_do: data.whatICanDo,
+    }, { headers: authHeader })
+      .then(() => setFlash({ open: true, message: 'Profile updated with success', severity: 'success' }))
+      .catch(() => setFlash({ open: true, message: 'Error, try later', severity: 'error' }));
   };
 
   const [newChanges, setNewChanges] = useState(false);
@@ -54,6 +65,18 @@ const TeacherProfil = ({ currentUser }) => {
     }
     setWhatICanDo(e.target.value);
   };
+
+  const [categories, setCategories] = useState({
+    maths: true,
+    physics: false,
+    arts: false,
+  });
+
+  const handleChange = event => {
+    setCategories({ ...categories, [event.target.name]: event.target.checked });
+  };
+
+  const { maths, physics, arts } = categories;
 
   return (
     <Card className={classes.card}>
@@ -132,6 +155,20 @@ const TeacherProfil = ({ currentUser }) => {
               name="whatICanDo"
             />
           </div>
+          <div className={classes.Checkbox}>
+            <FormControlLabel
+              control={<Checkbox checked={maths} onChange={handleChange} />}
+              label="Maths"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={physics} onChange={handleChange} />}
+              label="Physics"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={arts} onChange={handleChange} />}
+              label="Arts"
+            />
+          </div>
           <div className={classes.submit}>
             <Button variant="outlined" color="primary" type="submit">
               update profil
@@ -147,6 +184,10 @@ const mapStateToProps = state => ({
   currentUser: state.auth.currentUser,
 });
 
+const mapDispatchToProps = dispatch => ({
+  setFlash: flash => dispatch(setFlash(flash)),
+});
+
 TeacherProfil.propTypes = {
   currentUser: PropTypes.shape({
     email: PropTypes.string.isRequired,
@@ -154,7 +195,9 @@ TeacherProfil.propTypes = {
     phone: PropTypes.string,
     bio: PropTypes.string,
     what_I_can_do: PropTypes.string,
+    id: PropTypes.number,
   }).isRequired,
+  setFlash: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(TeacherProfil);
+export default connect(mapStateToProps, mapDispatchToProps)(TeacherProfil);

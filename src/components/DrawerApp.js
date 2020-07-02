@@ -53,7 +53,7 @@ function DrawerApp({
   };
 
   useEffect(() => {
-    axios.get(`${BACKEND}/api/v1/get_user_by_token`, { headers: authHeader })
+    axios.get(`${BACKEND}/api/v1/login/get_user_by_token`, { headers: authHeader })
       .then(res => {
         setUser(
           res.data.current_user,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Card from '@material-ui/core/Card';
 import uid from 'uid';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import FormControl from '@material-ui/core/FormControl';
@@ -17,6 +18,8 @@ import ScheduleDetails from './ScheduleDetails';
 import { setSchedule } from '../actions/authCreators';
 import { setFlash } from '../actions/layoutCreators';
 import { lessThen, biggerThen } from '../utils/dateCompare';
+import authHeadre from '../authHeader';
+import BACKEND from '../backend';
 
 const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
   const classes = useStyles();
@@ -26,12 +29,28 @@ const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
 
   const handleNewSessionTypeChange = e => setNewSessionType(e.target.value);
   const handleDeleteSessionType = i => {
-    setSessionsTypes([...sessionsTypes.filter((type, j) => i !== j)]);
+    const newSessionTypes = [...sessionsTypes.filter((type, j) => i !== j)];
+    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_session_type`, {
+      session_type: newSessionTypes.join(','),
+    }, { headers: authHeadre }).then(() => {
+      setSessionsTypes(newSessionTypes);
+      setFlash({ open: true, message: 'session deleted', severity: 'success' });
+    }).catch(() => {
+      setFlash({ open: true, message: 'There is an error', severity: 'error' });
+    });
   };
 
   const handleAddSessionType = () => {
-    setSessionsTypes([...sessionsTypes, newSessionType]);
-    setNewSessionType('');
+    const newSessionTypes = [...sessionsTypes, newSessionType];
+    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_session_type`, {
+      session_type: newSessionTypes.join(','),
+    }, { headers: authHeadre }).then(() => {
+      setSessionsTypes(newSessionTypes);
+      setNewSessionType('');
+      setFlash({ open: true, message: 'session added', severity: 'success' });
+    }).catch(() => {
+      setFlash({ open: true, message: 'There is an error', severity: 'error' });
+    });
   };
 
   const [day, setDay] = useState('');
@@ -51,7 +70,7 @@ const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
         message: 'select a day first',
         open: true,
       });
-    } else if (!to.match(/^\d\d:\d\d$/) || !to.match(/^\d\d:\d\d$/)) {
+    } else if (!to.match(/^\d\d:\d\d$/) || !from.match(/^\d\d:\d\d$/)) {
       setFlash({
         severity: 'warning',
         message: 'The to and from fields should be hours, ex: 14:00, 17:00',
@@ -80,11 +99,18 @@ const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
           currentSchedule[day].push(`${from}-${to}`);
         }
       }
-      setNewSchedule(currentSchedule);
-      setSchedule(currentSchedule);
-      setFrom('');
-      setTo('');
-      setDay('');
+      axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_schedule`, {
+        schedule: currentSchedule,
+      }, { headers: authHeadre }).then(() => {
+        setNewSchedule(currentSchedule);
+        setSchedule(currentSchedule);
+        setFrom('');
+        setTo('');
+        setDay('');
+        setFlash({ open: true, message: 'schedule updated', severity: 'success' });
+      }).catch(() => {
+        setFlash({ open: true, message: 'There is an error', severity: 'error' });
+      });
     }
   };
 
@@ -165,7 +191,7 @@ const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
         </div>
         {
           currentUser.schedule ? (
-            <ScheduleDetails schedule={currentUser.schedule} />
+            <ScheduleDetails options schedule={currentUser.schedule} />
           ) : 'You did not set a schedule yet'
         }
       </CardContent>
@@ -186,6 +212,7 @@ TeacherSchedule.propTypes = {
   currentUser: PropTypes.shape({
     schedule: PropTypes.shape({}),
     session_type: PropTypes.string,
+    id: PropTypes.number,
   }).isRequired,
   setSchedule: PropTypes.func.isRequired,
   setFlash: PropTypes.func.isRequired,

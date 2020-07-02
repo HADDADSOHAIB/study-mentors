@@ -1,20 +1,44 @@
 import React from 'react';
 import uid from 'uid';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { setSchedule } from '../actions/authCreators';
 import useStyles from './ScheduleDetailsStyles';
+import authHeadre from '../authHeader';
+import BACKEND from '../backend';
+import { setFlash } from '../actions/layoutCreators';
 
-const ScheduleDetails = ({ schedule, setSchedule }) => {
+const ScheduleDetails = ({
+  schedule,
+  setSchedule,
+  currentUser,
+  setFlash,
+  options,
+}) => {
   const classes = useStyles();
 
   const handleDeleteSession = (day, i) => {
     const currentSchedule = schedule;
     currentSchedule[day] = currentSchedule[day].filter((el, j) => i !== j);
-    setSchedule(currentSchedule);
+
+    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_schedule`, {
+      schedule: currentSchedule,
+    }, { headers: authHeadre }).then(() => {
+      setSchedule(currentSchedule);
+      setFlash({ open: true, message: 'schedule updated', severity: 'success' });
+    }).catch(() => {
+      setFlash({ open: true, message: 'There is an error', severity: 'error' });
+    });
   };
+
+  const sessionChip = (session, i, day) => (options ? (
+    <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession(day, i)} color="primary" variant="outlined" />
+  ) : (
+    <Chip label={session} key={uid(12)} color="primary" variant="outlined" />
+  ));
 
   return (
     <div>
@@ -27,7 +51,7 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
         <div className={classes.chips}>
           {
             schedule.monday && schedule.monday.length ? schedule.monday.map((session, i) => (
-              <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('monday', i)} color="primary" variant="outlined" />
+              sessionChip(session, i, 'monday')
             )) : (
               <p className={classes.chip}>no schedule is set for this day</p>
             )
@@ -43,7 +67,7 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
         <div className={classes.chips}>
           {
             schedule.tuesday && schedule.tuesday.length ? schedule.tuesday.map((session, i) => (
-              <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('tuesday', i)} color="primary" variant="outlined" />
+              sessionChip(session, i, 'tuesday')
             )) : (
               <p className={classes.chip}>no schedule is set for this day</p>
             )
@@ -60,7 +84,7 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
           {
             schedule.wednesday && schedule.wednesday.length
               ? schedule.wednesday.map((session, i) => (
-                <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('wednesday', i)} color="primary" variant="outlined" classes={{ root: classes.chip }} />
+                sessionChip(session, i, 'wednesday')
               )) : (
                 <p className={classes.chip}>no schedule is set for this day</p>
               )
@@ -76,7 +100,7 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
         <div className={classes.chips}>
           {
             schedule.thursday && schedule.thursday.length ? schedule.thursday.map((session, i) => (
-              <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('thursday', i)} color="primary" variant="outlined" />
+              sessionChip(session, i, 'thursday')
             )) : (
               <p className={classes.chip}>no schedule is set for this day</p>
             )
@@ -92,7 +116,7 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
         <div className={classes.chips}>
           {
             schedule.friday && schedule.friday.length ? schedule.friday.map((session, i) => (
-              <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('friday', i)} color="primary" variant="outlined" />
+              sessionChip(session, i, 'friday')
             )) : (
               <p className={classes.chip}>no schedule is set for this day</p>
             )
@@ -108,7 +132,7 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
         <div className={classes.chips}>
           {
             schedule.saturday && schedule.saturday.length ? schedule.saturday.map((session, i) => (
-              <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('saturday', i)} color="primary" variant="outlined" />
+              sessionChip(session, i, 'saturday')
             )) : (
               <p className={classes.chip}>no schedule is set for this day</p>
             )
@@ -124,7 +148,7 @@ const ScheduleDetails = ({ schedule, setSchedule }) => {
         <div className={classes.chips}>
           {
             schedule.sunday && schedule.sunday.length ? schedule.sunday.map((session, i) => (
-              <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSession('sunday', i)} color="primary" variant="outlined" />
+              sessionChip(session, i, 'sunday')
             )) : (
               <p className={classes.chip}>no schedule is set for this day</p>
             )
@@ -141,6 +165,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setSchedule: schedule => dispatch(setSchedule(schedule)),
+  setFlash: flash => dispatch(setFlash(flash)),
 });
 
 ScheduleDetails.propTypes = {
@@ -154,6 +179,15 @@ ScheduleDetails.propTypes = {
     sunday: PropTypes.string,
   }).isRequired,
   setSchedule: PropTypes.func.isRequired,
+  currentUser: PropTypes.shape({
+    id: PropTypes.number,
+  }).isRequired,
+  setFlash: PropTypes.func.isRequired,
+  options: PropTypes.bool,
+};
+
+ScheduleDetails.defaultProps = {
+  options: false,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ScheduleDetails);

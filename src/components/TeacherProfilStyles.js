@@ -17,6 +17,11 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     marginTop: 10,
   },
+  Checkbox: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
+  },
 }));
 
 export default useStyles;
