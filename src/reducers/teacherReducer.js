@@ -3,25 +3,18 @@ import {
   DECREASE_SELECTED_INDEX,
   INCREASE_FETCHED_DATA_COUNT,
   SELECT_CATEGORY,
+  START_FETCHING_TEACHERS,
+  SUCCESS_FETCHING_TEACHERS,
+  ERROR_FETCHING_TEACHERS,
 } from '../actions/teacherTypes';
 
 const INITIAL_STATE = {
-  profils: [
-    {
-      name: 'test 1',
-      Bio: 'I am a teacher, I can help you',
-      WhatICanDo: 'I can help you in your Math',
-      fee: '20$',
-    },
-    { name: 'test 2' },
-    { name: 'test 3' },
-    { name: 'test 4' },
-    { name: 'test 5' },
-    { name: 'test 6' },
-  ],
+  profils: [],
   selectedCategory: 'Maths',
   selectedProfilIndex: 0,
   fetchedDataCount: 20,
+  error: null,
+  dataLoading: false,
 };
 
 const teacherReducer = (state = INITIAL_STATE, action) => {
@@ -49,6 +42,23 @@ const teacherReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         fetchedDataCount: state.fetchedDataCount + 20,
+      };
+    case START_FETCHING_TEACHERS:
+      return {
+        ...state,
+        dataLoading: true,
+      };
+    case SUCCESS_FETCHING_TEACHERS:
+      return {
+        ...state,
+        dataLoading: false,
+        profils: payload.teachers,
+      };
+    case ERROR_FETCHING_TEACHERS:
+      return {
+        ...state,
+        dataLoading: false,
+        error: payload.error,
       };
     default:
       return {

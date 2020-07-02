@@ -58,6 +58,7 @@ function DrawerApp({
         setUser(
           res.data.current_user,
           res.data.account_type,
+          res.data.categories,
         );
       })
       .catch(() => clearUser);
@@ -195,7 +196,9 @@ const mapDispatchToProps = dispatch => ({
   closeDrawer: () => dispatch(closeDrawer()),
   selectCategory: category => dispatch(selectCategory(category)),
   clearUser: () => dispatch(clearUser()),
-  setUser: (currentUser, accountType) => dispatch(setUser(currentUser, accountType)),
+  setUser: (currentUser, accountType, categories) => dispatch(
+    setUser(currentUser, accountType, categories),
+  ),
 });
 
 const mapStateToProps = state => ({

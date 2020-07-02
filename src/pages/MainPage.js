@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
+import uid from 'uid';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,9 +11,16 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import useStyles from './MainPageStyles';
 import TeacherCard from '../components/TeacherCard';
-import { increaseSelectedIndex, decreaseSelectedIndex } from '../actions/teacherCreators';
+import { increaseSelectedIndex, decreaseSelectedIndex, fetchTeachers } from '../actions/teacherCreators';
 
-function MainPage({ profils, selectedProfilIndex, increaseSelectedIndex, decreaseSelectedIndex }) {
+function MainPage({
+  profils,
+  selectedProfilIndex,
+  increaseSelectedIndex,
+  decreaseSelectedIndex,
+  selectedCategory,
+  fetchTeachers,
+}) {
   const classes = useStyles();
   const [show, setShow] = useState([]);
   const [direction, setDirection] = useState('right');
@@ -26,6 +34,11 @@ function MainPage({ profils, selectedProfilIndex, increaseSelectedIndex, decreas
     setShow(newShow);
     return () => '';
   }, [profils, selectedProfilIndex]);
+
+  useEffect(() => {
+    fetchTeachers(selectedCategory.toLowerCase());
+    return () => '';
+  }, [selectedCategory]);
 
   const clickRight = () => {
     setDirection('left');
@@ -68,9 +81,16 @@ function MainPage({ profils, selectedProfilIndex, increaseSelectedIndex, decreas
           <div className={classes.teacherContainer}>
             {
               profils.map((profil, i) => (
-                <Slide key={i} direction={direction} in={show[i]} mountOnEnter unmountOnExit timeout={{ enter: 500 }}>
+                <Slide
+                  key={uid(12)}
+                  direction={direction}
+                  in={show[i]}
+                  mountOnEnter
+                  unmountOnExit
+                  timeout={{ enter: 500 }}
+                >
                   <Paper elevation={4} className={classes.paper}>
-                    <TeacherCard name={profil.name} />
+                    <TeacherCard name={profil.fullname} />
                   </Paper>
                 </Slide>
               ))
@@ -107,16 +127,20 @@ MainPage.propTypes = {
   selectedProfilIndex: PropTypes.string.isRequired,
   increaseSelectedIndex: PropTypes.func.isRequired,
   decreaseSelectedIndex: PropTypes.func.isRequired,
+  fetchTeachers: PropTypes.func.isRequired,
+  selectedCategory: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
   profils: state.teacher.profils,
   selectedProfilIndex: state.teacher.selectedProfilIndex,
+  selectedCategory: state.teacher.selectedCategory,
 });
 
 const mapDispatchToProps = dispatch => ({
   increaseSelectedIndex: () => dispatch(increaseSelectedIndex()),
   decreaseSelectedIndex: () => dispatch(decreaseSelectedIndex()),
+  fetchTeachers: category => dispatch(fetchTeachers(category)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainPage);

@@ -4,11 +4,12 @@ import {
   SET_SCHEDULE,
 } from './authTypes';
 
-const setUser = (currentUser, accountType) => ({
+const setUser = (currentUser, accountType, categories) => ({
   type: SET_USER,
   payload: {
     currentUser,
     accountType,
+    categories,
   },
 });
 

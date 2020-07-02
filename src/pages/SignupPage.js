@@ -59,6 +59,7 @@ const Signup = ({ history, setFlash, setUser }) => {
       setUser(
         res.data.current_user,
         value === 0 ? 'Teacher' : 'Student',
+        res.data.categories,
       );
     }).catch(() => {
       setFlash({
@@ -197,7 +198,9 @@ Signup.propTypes = {
 
 const mapDispatchToProps = dispatch => ({
   setFlash: flash => dispatch(setFlash(flash)),
-  setUser: (currentUser, accountType) => dispatch(setUser(currentUser, accountType)),
+  setUser: (currentUser, accountType, categories) => dispatch(
+    setUser(currentUser, accountType, categories),
+  ),
 });
 
 export default connect(null, mapDispatchToProps)(Signup);

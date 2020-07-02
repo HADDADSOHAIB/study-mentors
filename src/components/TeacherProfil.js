@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '@material-ui/core/Card';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -14,8 +14,14 @@ import useStyles from './TeacherProfilStyles';
 import authHeader from '../authHeader';
 import BACKEND from '../backend';
 import { setFlash } from '../actions/layoutCreators';
+import { setUser } from '../actions/authCreators';
 
-const TeacherProfil = ({ currentUser, setFlash }) => {
+const TeacherProfil = ({
+  currentUser,
+  setFlash,
+  categories,
+  setUser,
+}) => {
   const classes = useStyles();
   const {
     register,
@@ -23,60 +29,53 @@ const TeacherProfil = ({ currentUser, setFlash }) => {
     errors,
   } = useForm();
 
-  const onSubmit = data => {
-    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_profil`, {
-      ...data,
-      what_I_can_do: data.whatICanDo,
-    }, { headers: authHeader })
-      .then(() => setFlash({ open: true, message: 'Profile updated with success', severity: 'success' }))
-      .catch(() => setFlash({ open: true, message: 'Error, try later', severity: 'error' }));
-  };
-
-  const [newChanges, setNewChanges] = useState(false);
   const [fullname, setFullName] = useState(currentUser.fullname);
   const [phone, setPhone] = useState(currentUser.phone);
   const [bio, setBio] = useState(currentUser.bio);
   const [whatICanDo, setWhatICanDo] = useState(currentUser.what_I_can_do);
+  const [photo, setPhoto] = useState(currentUser.photo);
 
-  const handleEmailChange = e => {
-    if (!newChanges) {
-      setNewChanges(true);
-    }
-    setFullName(e.target.value);
-  };
+  const handleEmailChange = e => setFullName(e.target.value);
+  const handlePhoneChange = e => setPhone(e.target.value);
+  const handlePhotoChange = e => setPhoto(e.target.value);
+  const handleBioChange = e => setBio(e.target.value);
+  const handleWhatICanDoChange = e => setWhatICanDo(e.target.value);
 
-  const handlePhoneChange = e => {
-    if (!newChanges) {
-      setNewChanges(true);
-    }
-    setPhone(e.target.value);
-  };
-
-  const handleBioChange = e => {
-    if (!newChanges) {
-      setNewChanges(true);
-    }
-    setBio(e.target.value);
-  };
-
-  const handleWhatICanDoChange = e => {
-    if (!newChanges) {
-      setNewChanges(true);
-    }
-    setWhatICanDo(e.target.value);
-  };
-
-  const [categories, setCategories] = useState({
-    maths: true,
+  const [categoriesList, setCategoriesList] = useState({
+    maths: false,
     physics: false,
     arts: false,
+    english: false,
   });
 
   const handleChange = event => {
-    setCategories({ ...categories, [event.target.name]: event.target.checked });
+    setCategoriesList({ ...categoriesList, [event.target.name]: event.target.checked });
   };
 
-  const { maths, physics, arts } = categories;
+  useEffect(() => {
+    const currentCategories = categoriesList;
+    categories.forEach(cat => {
+      currentCategories[cat.name] = true;
+    });
+    setCategoriesList({ ...currentCategories });
+    return () => '';
+  }, [categories]);
+
+  const onSubmit = data => {
+    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_profil`, {
+      ...data,
+      what_I_can_do: data.whatICanDo,
+      categories: categoriesList,
+    }, { headers: authHeader })
+      .then(res => {
+        setFlash({ open: true, message: 'Profile updated with success', severity: 'success' });
+        setUser(
+          res.data.current_user,
+          'Teacher',
+          res.data.categories,
+        );
+      }).catch(() => setFlash({ open: true, message: 'Error, try later', severity: 'error' }));
+  };
 
   return (
     <Card className={classes.card}>
@@ -155,18 +154,36 @@ const TeacherProfil = ({ currentUser, setFlash }) => {
               name="whatICanDo"
             />
           </div>
+          <div className={classes.textField}>
+            <TextField
+              inputRef={register}
+              onChange={handlePhotoChange}
+              value={photo || ''}
+              label="photo"
+              rows={2}
+              fullWidth
+              variant="outlined"
+              type="text"
+              name="photo"
+              size="small"
+            />
+          </div>
           <div className={classes.Checkbox}>
             <FormControlLabel
-              control={<Checkbox checked={maths} onChange={handleChange} />}
+              control={<Checkbox checked={categoriesList.maths} onChange={handleChange} name="maths" />}
               label="Maths"
             />
             <FormControlLabel
-              control={<Checkbox checked={physics} onChange={handleChange} />}
+              control={<Checkbox checked={categoriesList.physics} onChange={handleChange} name="physics" />}
               label="Physics"
             />
             <FormControlLabel
-              control={<Checkbox checked={arts} onChange={handleChange} />}
+              control={<Checkbox checked={categoriesList.arts} onChange={handleChange} name="arts" />}
               label="Arts"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={categoriesList.english} onChange={handleChange} name="english" />}
+              label="English"
             />
           </div>
           <div className={classes.submit}>
@@ -182,10 +199,14 @@ const TeacherProfil = ({ currentUser, setFlash }) => {
 
 const mapStateToProps = state => ({
   currentUser: state.auth.currentUser,
+  categories: state.auth.categories,
 });
 
 const mapDispatchToProps = dispatch => ({
   setFlash: flash => dispatch(setFlash(flash)),
+  setUser: (currentUser, accountType, categories) => dispatch(
+    setUser(currentUser, accountType, categories),
+  ),
 });
 
 TeacherProfil.propTypes = {
@@ -196,8 +217,11 @@ TeacherProfil.propTypes = {
     bio: PropTypes.string,
     what_I_can_do: PropTypes.string,
     id: PropTypes.number,
+    photo: PropTypes.string,
   }).isRequired,
   setFlash: PropTypes.func.isRequired,
+  categories: PropTypes.shape([]).isRequired,
+  setUser: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeacherProfil);
