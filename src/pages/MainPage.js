@@ -20,6 +20,7 @@ function MainPage({
   decreaseSelectedIndex,
   selectedCategory,
   fetchTeachers,
+  error,
 }) {
   const classes = useStyles();
   const [show, setShow] = useState([]);
@@ -50,6 +51,75 @@ function MainPage({
     decreaseSelectedIndex();
   };
 
+  const TeachersDisplay = (
+    <div className={classes.teachers}>
+      <div className={classes.next}>
+        <div className={classes.nextButtonContainer}>
+          {
+            selectedProfilIndex !== 0 && (
+              <IconButton className={classes.nextButton} onClick={clickLeft}>
+                <ArrowBackOutlinedIcon fontSize="large" />
+              </IconButton>
+            )
+          }
+        </div>
+        <div className={classes.numberContainer}>
+          <IconButton className={classes.nextButton}>
+            {selectedProfilIndex + 1}
+            /
+            { profils.length }
+          </IconButton>
+        </div>
+      </div>
+      <div className={classes.teacher}>
+        <div className={classes.teacherContainer}>
+          {
+            profils.map((profil, i) => (
+              <Slide
+                key={uid(12)}
+                direction={direction}
+                in={show[i]}
+                mountOnEnter
+                unmountOnExit
+                timeout={{ enter: 500 }}
+              >
+                <Paper elevation={4} className={classes.paper}>
+                  <TeacherCard
+                    fullname={profil.fullname}
+                    photo={profil.photo}
+                    whatICanDo={profil.what_I_can_do}
+                    bio={profil.bio}
+                    id={profil.id}
+                  />
+                </Paper>
+              </Slide>
+            ))
+          }
+        </div>
+      </div>
+      <div className={classes.next}>
+        <div className={classes.nextButtonContainer}>
+          {
+            selectedProfilIndex + 1 !== profils.length && (
+              <IconButton className={classes.nextButton} onClick={clickRight}>
+                <ArrowForwardOutlinedIcon fontSize="large" />
+              </IconButton>
+            )
+          }
+        </div>
+        <div className={classes.moreContainer}>
+          {
+            selectedProfilIndex + 1 === profils.length && (
+              <Button className={classes.nextButton}>
+                Load More
+              </Button>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className={classes.body}>
       <div className={classes.bodyHeader}>
@@ -58,66 +128,13 @@ function MainPage({
         </h1>
         <p className={classes.marginTopNone}>They are here for you</p>
       </div>
-      <div className={classes.teachers}>
-        <div className={classes.next}>
-          <div className={classes.nextButtonContainer}>
-            {
-              selectedProfilIndex !== 0 && (
-                <IconButton className={classes.nextButton} onClick={clickLeft}>
-                  <ArrowBackOutlinedIcon fontSize="large" />
-                </IconButton>
-              )
-            }
+      {
+        profils.length && !error ? TeachersDisplay : (
+          <div className={classes.noteachers}>
+            <p>There is no available teachers for this category</p>
           </div>
-          <div className={classes.numberContainer}>
-            <IconButton className={classes.nextButton}>
-              {selectedProfilIndex + 1}
-              /
-              { profils.length }
-            </IconButton>
-          </div>
-        </div>
-        <div className={classes.teacher}>
-          <div className={classes.teacherContainer}>
-            {
-              profils.map((profil, i) => (
-                <Slide
-                  key={uid(12)}
-                  direction={direction}
-                  in={show[i]}
-                  mountOnEnter
-                  unmountOnExit
-                  timeout={{ enter: 500 }}
-                >
-                  <Paper elevation={4} className={classes.paper}>
-                    <TeacherCard name={profil.fullname} />
-                  </Paper>
-                </Slide>
-              ))
-            }
-          </div>
-        </div>
-        <div className={classes.next}>
-          <div className={classes.nextButtonContainer}>
-            {
-              selectedProfilIndex + 1 !== profils.length && (
-                <IconButton className={classes.nextButton} onClick={clickRight}>
-                  <ArrowForwardOutlinedIcon fontSize="large" />
-                </IconButton>
-              )
-            }
-          </div>
-          <div className={classes.moreContainer}>
-            {
-              selectedProfilIndex + 1 === profils.length && (
-                <Button className={classes.nextButton}>
-                  Load More
-                </Button>
-              )
-            }
-          </div>
-        </div>
-      </div>
+        )
+      }
     </div>
   );
 }
@@ -129,12 +146,18 @@ MainPage.propTypes = {
   decreaseSelectedIndex: PropTypes.func.isRequired,
   fetchTeachers: PropTypes.func.isRequired,
   selectedCategory: PropTypes.string.isRequired,
+  error: PropTypes.shape({}),
+};
+
+MainPage.defaultProps = {
+  error: null,
 };
 
 const mapStateToProps = state => ({
   profils: state.teacher.profils,
   selectedProfilIndex: state.teacher.selectedProfilIndex,
   selectedCategory: state.teacher.selectedCategory,
+  error: state.teacher.error,
 });
 
 const mapDispatchToProps = dispatch => ({

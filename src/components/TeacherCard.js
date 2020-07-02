@@ -5,18 +5,15 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { withRouter } from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
     maxWidth: 345,
+    cursor: 'pointer',
   },
   media: {
     height: 0,
@@ -37,54 +34,60 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TeacherCard = ({ name }) => {
+const TeacherCard = ({
+  id,
+  fullname,
+  photo,
+  whatICanDo,
+  bio,
+  history,
+}) => {
   const classes = useStyles();
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} onClick={() => history.push(`/teachers/${id}`)}>
       <CardHeader
         avatar={
           (
             <Avatar aria-label="recipe" className={classes.avatar}>
-              R
+              {fullname[0]}
             </Avatar>
           )
         }
-        action={
-          (
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
-            </IconButton>
-          )
-        }
-        title={name}
-        subheader="September 14, 2016"
+        title={fullname}
       />
       <CardMedia
         className={classes.media}
-        image="/teacher.jpg"
-        title="Paella dish"
+        image={photo || '/teacher.jpg'}
+        title="teacher card"
       />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
-          This impressive paella is a perfect party dish and a fun meal to cook together with your
-          guests. Add 1 cup of frozen peas along with the mussels, if you like.
+          what I can do:
+          {whatICanDo || 'no information is provided by the teacher'}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+          bio:
+          {bio || 'no information is provided by the teacher'}
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
     </Card>
   );
 };
 
 TeacherCard.propTypes = {
-  name: PropTypes.string.isRequired,
+  fullname: PropTypes.string.isRequired,
+  photo: PropTypes.string,
+  whatICanDo: PropTypes.string,
+  bio: PropTypes.string,
+  id: PropTypes.number.isRequired,
+  history: PropTypes.shape([]).isRequired,
 };
 
-export default TeacherCard;
+TeacherCard.defaultProps = {
+  photo: null,
+  whatICanDo: null,
+  bio: null,
+};
+
+export default withRouter(TeacherCard);

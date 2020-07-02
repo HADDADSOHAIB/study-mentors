@@ -75,4 +75,10 @@ export default makeStyles(theme => ({
     alignItems: 'center',
     paddingLeft: '10px',
   },
+  noteachers: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '60vh',
+  },
 }));
