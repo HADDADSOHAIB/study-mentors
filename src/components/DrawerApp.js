@@ -127,13 +127,17 @@ function DrawerApp({
           <ListItem
             button
             classes={{ root: clsx(classes.item, location.pathname === '/profil' && classes.selected) }}
-            onClick={() => history.push('profil')}
+            onClick={() => history.push('/profil')}
           >
             <ListItemIcon><PersonIcon /></ListItemIcon>
             <ListItemText primary="PROFIL" classes={{ primary: classes.itemText }} />
           </ListItem>
           <Divider />
-          <ListItem button classes={{ root: classes.item }}>
+          <ListItem
+            button
+            classes={{ root: clsx(classes.item, location.pathname === '/my_bookings' && classes.selected) }}
+            onClick={() => history.push('/my_bookings')}
+          >
             <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
             <ListItemText primary="BOOKINGS" classes={{ primary: classes.itemText }} />
           </ListItem>

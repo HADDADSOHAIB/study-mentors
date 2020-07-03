@@ -18,6 +18,7 @@ import SigninPage from '../pages/SigninPage';
 import ProfilPage from '../pages/ProfilPage';
 import TeacherPage from '../pages/TeacherPage';
 import MakeBookingPage from '../pages/MakeBookingPage';
+import MyBookingsPage from '../pages/MyBookingsPage';
 
 function App({ openDrawer, open }) {
   const classes = useStyles();
@@ -42,6 +43,7 @@ function App({ openDrawer, open }) {
           <Flash />
         </div>
         <Switch>
+          <Route path="/my_bookings" component={MyBookingsPage} />
           <Route path="/teachers/:id/book" component={MakeBookingPage} />
           <Route path="/teachers/:id" component={TeacherPage} />
           <Route path="/profil" component={ProfilPage} />
