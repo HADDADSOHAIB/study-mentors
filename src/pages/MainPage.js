@@ -7,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
 import Slide from '@material-ui/core/Slide';
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import useStyles from './MainPageStyles';
 import TeacherCard from '../components/TeacherCard';
@@ -104,15 +103,6 @@ function MainPage({
               <IconButton className={classes.nextButton} onClick={clickRight}>
                 <ArrowForwardOutlinedIcon fontSize="large" />
               </IconButton>
-            )
-          }
-        </div>
-        <div className={classes.moreContainer}>
-          {
-            selectedProfilIndex + 1 === profils.length && (
-              <Button className={classes.nextButton}>
-                Load More
-              </Button>
             )
           }
         </div>
