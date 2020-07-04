@@ -44,7 +44,7 @@ const ScheduleDetails = ({
     <div>
       <div className={classes.session}>
         <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="p" display="inline">
+          <Typography color="textPrimary" variant="body1" display="inline">
             Monday:
           </Typography>
         </div>
@@ -60,7 +60,7 @@ const ScheduleDetails = ({
       </div>
       <div className={classes.session}>
         <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="p" display="inline">
+          <Typography color="textPrimary" variant="body1" display="inline">
             Tuesday:
           </Typography>
         </div>
@@ -76,7 +76,7 @@ const ScheduleDetails = ({
       </div>
       <div className={classes.session}>
         <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="p" display="inline">
+          <Typography color="textPrimary" variant="body1" display="inline">
             Wednesday:
           </Typography>
         </div>
@@ -93,7 +93,7 @@ const ScheduleDetails = ({
       </div>
       <div className={classes.session}>
         <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="p" display="inline">
+          <Typography color="textPrimary" variant="body1" display="inline">
             Thursday:
           </Typography>
         </div>
@@ -109,7 +109,7 @@ const ScheduleDetails = ({
       </div>
       <div className={classes.session}>
         <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="p" display="inline">
+          <Typography color="textPrimary" variant="body1" display="inline">
             Friday:
           </Typography>
         </div>
@@ -125,7 +125,7 @@ const ScheduleDetails = ({
       </div>
       <div className={classes.session}>
         <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="p" display="inline">
+          <Typography color="textPrimary" variant="body1" display="inline">
             Saturday:
           </Typography>
         </div>
@@ -141,7 +141,7 @@ const ScheduleDetails = ({
       </div>
       <div className={classes.session}>
         <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="p" display="inline">
+          <Typography color="textPrimary" variant="body1" display="inline">
             Sunday:
           </Typography>
         </div>
@@ -170,13 +170,13 @@ const mapDispatchToProps = dispatch => ({
 
 ScheduleDetails.propTypes = {
   schedule: PropTypes.shape({
-    monday: PropTypes.string,
-    tuesday: PropTypes.string,
-    wednesday: PropTypes.string,
-    thursday: PropTypes.string,
-    friday: PropTypes.string,
-    saturday: PropTypes.string,
-    sunday: PropTypes.string,
+    monday: PropTypes.arrayOf(Object),
+    tuesday: PropTypes.arrayOf(Object),
+    wednesday: PropTypes.arrayOf(Object),
+    thursday: PropTypes.arrayOf(Object),
+    friday: PropTypes.arrayOf(Object),
+    saturday: PropTypes.arrayOf(Object),
+    sunday: PropTypes.arrayOf(Object),
   }).isRequired,
   setSchedule: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({

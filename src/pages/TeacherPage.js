@@ -27,8 +27,7 @@ const TeacherPage = ({ match, history }) => {
       .then(res => {
         setTeacher(res.data.teacher);
         setCategories(res.data.categories);
-      })
-      .catch(err => console.log(err));
+      });
     return () => '';
   }, []);
 
@@ -114,7 +113,7 @@ const TeacherPage = ({ match, history }) => {
 TeacherPage.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.number,
+      id: PropTypes.string,
     }),
   }).isRequired,
   history: PropTypes.shape([]).isRequired,

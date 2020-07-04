@@ -140,8 +140,8 @@ function MainPage({
 }
 
 MainPage.propTypes = {
-  profils: PropTypes.shape([]).isRequired,
-  selectedProfilIndex: PropTypes.string.isRequired,
+  profils: PropTypes.arrayOf(Object).isRequired,
+  selectedProfilIndex: PropTypes.number.isRequired,
   increaseSelectedIndex: PropTypes.func.isRequired,
   decreaseSelectedIndex: PropTypes.func.isRequired,
   fetchTeachers: PropTypes.func.isRequired,

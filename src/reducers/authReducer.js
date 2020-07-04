@@ -5,9 +5,9 @@ import {
 } from '../actions/authTypes';
 
 const INITIAL_STATE = {
-  currentUser: null,
-  accountType: null,
-  categories: null,
+  currentUser: {},
+  accountType: '',
+  categories: [],
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -23,9 +23,9 @@ const authReducer = (state = INITIAL_STATE, action) => {
       };
     case CLEAR_USER:
       return {
-        currentUser: null,
-        accountType: null,
-        categories: null,
+        currentUser: {},
+        accountType: '',
+        categories: [],
       };
     case SET_SCHEDULE:
       return {

@@ -52,13 +52,23 @@ function DrawerApp({
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem('token_auth');
+    history.push('/');
+    setUser(
+      '',
+      '',
+      [],
+    );
+  };
+
   useEffect(() => {
     axios.get(`${BACKEND}/api/v1/login/get_user_by_token`, { headers: authHeader })
       .then(res => {
         setUser(
           res.data.current_user,
           res.data.account_type,
-          res.data.categories,
+          res.data.categories || [],
         );
       })
       .catch(() => clearUser);
@@ -140,6 +150,15 @@ function DrawerApp({
           >
             <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
             <ListItemText primary="BOOKINGS" classes={{ primary: classes.itemText }} />
+          </ListItem>
+          <Divider />
+          <ListItem
+            button
+            classes={{ root: classes.item }}
+            onClick={logout}
+          >
+            <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
+            <ListItemText primary="LOGOUT" classes={{ primary: classes.itemText }} />
           </ListItem>
           <Divider />
         </List>

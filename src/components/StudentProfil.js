@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Card from '@material-ui/core/Card';
 import { connect } from 'react-redux';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { useForm } from 'react-hook-form';
@@ -8,8 +9,16 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import useStyles from './StudentProfilStyles';
+import authHeader from '../authHeader';
+import BACKEND from '../backend';
+import { setFlash } from '../actions/layoutCreators';
+import { setUser } from '../actions/authCreators';
 
-const StudentProfil = ({ currentUser }) => {
+const StudentProfil = ({
+  currentUser,
+  setFlash,
+  setUser,
+}) => {
   const classes = useStyles();
   const {
     register,
@@ -18,26 +27,24 @@ const StudentProfil = ({ currentUser }) => {
   } = useForm();
 
   const onSubmit = data => {
-    console.log(data);
+    axios.put(`${BACKEND}/api/v1/students/${currentUser.id}/update_profil`, {
+      ...data,
+    }, { headers: authHeader })
+      .then(res => {
+        setFlash({ open: true, message: 'Profile updated with success', severity: 'success' });
+        setUser(
+          res.data.current_user,
+          'Student',
+          [],
+        );
+      }).catch(() => setFlash({ open: true, message: 'Error, try later', severity: 'error' }));
   };
 
-  const [newChanges, setNewChanges] = useState(false);
   const [fullname, setFullName] = useState(currentUser.fullname);
   const [phone, setPhone] = useState(currentUser.phone);
 
-  const handleEmailChange = e => {
-    if (!newChanges) {
-      setNewChanges(true);
-    }
-    setFullName(e.target.value);
-  };
-
-  const handlePhoneChange = e => {
-    if (!newChanges) {
-      setNewChanges(true);
-    }
-    setPhone(e.target.value);
-  };
+  const handleEmailChange = e => setFullName(e.target.value);
+  const handlePhoneChange = e => setPhone(e.target.value);
 
   return (
     <Card className={classes.card}>
@@ -103,12 +110,22 @@ const mapStateToProps = state => ({
   currentUser: state.auth.currentUser,
 });
 
+const mapDispatchToProps = dispatch => ({
+  setFlash: flash => dispatch(setFlash(flash)),
+  setUser: (currentUser, accountType, categories) => dispatch(
+    setUser(currentUser, accountType, categories),
+  ),
+});
+
 StudentProfil.propTypes = {
   currentUser: PropTypes.shape({
     email: PropTypes.string.isRequired,
     fullname: PropTypes.string.isRequired,
     phone: PropTypes.string,
+    id: PropTypes.number,
   }).isRequired,
+  setFlash: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(StudentProfil);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentProfil);
