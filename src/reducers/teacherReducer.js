@@ -25,6 +25,7 @@ const teacherReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         selectedCategory: payload.category,
+        selectedProfilIndex: 0,
       };
     case INCREASE_SELECTED_INDEX:
       return {

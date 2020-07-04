@@ -59,7 +59,7 @@ const Signin = ({ history, setFlash, setUser }) => {
         });
       } else {
         setFlash({
-          message: 'Error, try later',
+          message: `Error, there is no ${value === 0 ? 'Teacher' : 'Student'} account with this email`,
           open: true,
           severity: 'error',
         });

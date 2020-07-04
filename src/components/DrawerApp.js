@@ -131,7 +131,7 @@ function DrawerApp({
         </ListItem>
         <Divider />
       </List>
-      { currentUser ? (
+      { Object.keys(currentUser).length ? (
         <List>
           <Divider />
           <ListItem

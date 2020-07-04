@@ -31,7 +31,7 @@ const mapStateToProps = state => ({
 
 ProfilePage.propTypes = {
   currentUser: PropTypes.shape({
-    email: PropTypes.string.isRequired,
+    email: PropTypes.string,
   }),
   accountType: PropTypes.string,
 };

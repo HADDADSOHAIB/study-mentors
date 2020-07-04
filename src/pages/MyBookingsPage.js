@@ -19,7 +19,7 @@ function MyBookingsPage({ currentUser, accountType }) {
 
   const [bookings, setBookings] = useState([]);
   useEffect(() => {
-    if (currentUser && accountType) {
+    if (Object.keys(currentUser).length && accountType) {
       axios.post(`${BACKEND}/api/v1/bookings/my_bookings`, {
         account_type: accountType,
         id: currentUser.id,
@@ -48,7 +48,7 @@ function MyBookingsPage({ currentUser, accountType }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {bookings.map(booking => (
+            {bookings.length ? bookings.map(booking => (
               <TableRow key={booking.id}>
                 <TableCell component="th" scope="row">
                   {booking.teacher.fullname}
@@ -67,7 +67,13 @@ function MyBookingsPage({ currentUser, accountType }) {
                   {formatter(new Date(booking.to).getMinutes())}
                 </TableCell>
               </TableRow>
-            ))}
+            )) : (
+              <TableRow>
+                <TableCell align="center" colSpan={6}>
+                  <span>You don&rsquo;t have any bookings yet</span>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

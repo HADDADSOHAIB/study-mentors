@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import CardMedia from '@material-ui/core/CardMedia';
 import Card from '@material-ui/core/Card';
 import Chip from '@material-ui/core/Chip';
@@ -17,7 +18,7 @@ import makeStyle from './TeacherPageStyles';
 import BACKEND from '../backend';
 import ScheduleDetails from '../components/ScheduleDetails';
 
-const TeacherPage = ({ match, history }) => {
+const TeacherPage = ({ match, history, accountType }) => {
   const classes = makeStyle();
   const [teacher, setTeacher] = useState(null);
   const [categories, setCategories] = useState(null);
@@ -93,11 +94,13 @@ const TeacherPage = ({ match, history }) => {
                 </AppBar>
                 <CardContent>
                   { teacher && (<ScheduleDetails schedule={teacher.schedule} />)}
-                  <div className={classes.book}>
-                    <Button variant="outlined" color="primary" onClick={() => history.push(`/teachers/${teacher.id}/book`)}>
-                      Book an appoitements
-                    </Button>
-                  </div>
+                  { accountType === 'Student' ? (
+                    <div className={classes.book}>
+                      <Button variant="outlined" color="primary" onClick={() => history.push(`/teachers/${teacher.id}/book`)}>
+                        Book an appoitements
+                      </Button>
+                    </div>
+                  ) : ''}
                 </CardContent>
               </Card>
             </div>
@@ -117,6 +120,11 @@ TeacherPage.propTypes = {
     }),
   }).isRequired,
   history: PropTypes.shape([]).isRequired,
+  accountType: PropTypes.string.isRequired,
 };
 
-export default TeacherPage;
+const mapStateToProps = state => ({
+  accountType: state.auth.accountType,
+});
+
+export default connect(mapStateToProps)(TeacherPage);

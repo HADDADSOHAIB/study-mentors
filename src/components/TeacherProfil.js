@@ -220,7 +220,7 @@ TeacherProfil.propTypes = {
     photo: PropTypes.string,
   }).isRequired,
   setFlash: PropTypes.func.isRequired,
-  categories: PropTypes.shape([]).isRequired,
+  categories: PropTypes.arrayOf(Object).isRequired,
   setUser: PropTypes.func.isRequired,
 };
 

@@ -136,7 +136,7 @@ const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
         </div>
         <div className={classes.sessionTypes}>
           <div className={classes.sessionTitles}>
-            <Typography color="textPrimary" variant="p" display="inline">
+            <Typography color="textPrimary" variant="body1" display="inline">
               Session Types:
             </Typography>
           </div>
