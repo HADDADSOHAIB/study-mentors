@@ -26,7 +26,7 @@ export default makeStyles(theme => ({
     zIndex: 1,
     position: 'relative',
     margin: theme.spacing(1),
-    width: 'fit-content',
+    width: '100%',
   },
   teachers: {
     display: 'flex',
@@ -38,6 +38,10 @@ export default makeStyles(theme => ({
   teacherContainer: {
     position: 'absolute',
     top: 0,
+    width: '500px',
+    [theme.breakpoints.down('sm')]: {
+      width: '300px',
+    },
   },
   next: {
     flexGrow: 1,

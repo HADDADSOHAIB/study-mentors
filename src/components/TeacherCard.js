@@ -12,7 +12,7 @@ import { withRouter } from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    maxWidth: 345,
+    width: '100%',
     cursor: 'pointer',
   },
   media: {
@@ -62,11 +62,11 @@ const TeacherCard = ({
         title="teacher card"
       />
       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
+        <Typography variant="body2" color="textSecondary" component="p" align="center">
           what I can do:
           {whatICanDo || 'no information is provided by the teacher'}
         </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
+        <Typography variant="body2" color="textSecondary" component="p" align="center">
           bio:
           {bio || 'no information is provided by the teacher'}
         </Typography>
