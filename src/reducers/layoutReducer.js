@@ -55,4 +55,5 @@ const layoutReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
+export { INITIAL_STATE };
 export default layoutReducer;

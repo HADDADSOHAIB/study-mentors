@@ -50,7 +50,7 @@ const errorFetchingTeachers = error => ({
 
 const fetchTeachers = category => dispatch => {
   dispatch(startFetchingTeachers());
-  axios.get(`${BACKEND}/api/v1/categories/${category}/teachers`, { headers: authHeader })
+  return axios.get(`${BACKEND}/api/v1/categories/${category}/teachers`, { headers: authHeader })
     .then(res => dispatch(succesFetchingTeachers(res.data.teachers)))
     .catch(err => dispatch(errorFetchingTeachers(err)));
 };
@@ -61,4 +61,7 @@ export {
   increaseSelectedIndex,
   decreaseSelectedIndex,
   fetchTeachers,
+  startFetchingTeachers,
+  succesFetchingTeachers,
+  errorFetchingTeachers,
 };
