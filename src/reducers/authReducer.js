@@ -3,10 +3,14 @@ import {
   CLEAR_USER,
   SET_SCHEDULE,
   START_FETCH_USER_BY_TOKEN,
-  SUCCESS_FETCH_USER_BY_TOKEN,
   ERROR_FETCH_USER_BY_TOKEN,
   START_UPDATE_SCHEDULE,
   ERROR_UPDATE_SCHEDULE,
+  START_UPDATE_PROFIL,
+  ERROR_UPDATE_PROFIL,
+  START_UPDATE_SESSION_TYPE,
+  ERROR_UPDATE_SESSION_TYPE,
+  SUCCESS_UPDATE_SESSION_TYPE,
 } from '../actions/authTypes';
 
 const INITIAL_STATE = {
@@ -27,21 +31,20 @@ const authReducer = (state = INITIAL_STATE, action) => {
         currentUser: payload.currentUser,
         accountType: payload.accountType,
         categories: payload.categories,
+        loading: false,
       };
     case START_FETCH_USER_BY_TOKEN:
+    case START_UPDATE_SCHEDULE:
+    case START_UPDATE_PROFIL:
+    case START_UPDATE_SESSION_TYPE:
       return {
         ...state,
-        loading: true,
-      };
-    case SUCCESS_FETCH_USER_BY_TOKEN:
-      return {
-        ...state,
-        currentUser: payload.currentUser,
-        accountType: payload.accountType,
-        categories: payload.categories,
         loading: true,
       };
     case ERROR_FETCH_USER_BY_TOKEN:
+    case ERROR_UPDATE_SCHEDULE:
+    case ERROR_UPDATE_PROFIL:
+    case ERROR_UPDATE_SESSION_TYPE:
       return {
         ...state,
         error: payload.error,
@@ -53,11 +56,6 @@ const authReducer = (state = INITIAL_STATE, action) => {
         accountType: '',
         categories: [],
       };
-    case START_UPDATE_SCHEDULE:
-      return {
-        ...state,
-        loading: true,
-      };
     case SET_SCHEDULE:
       return {
         ...state,
@@ -67,11 +65,14 @@ const authReducer = (state = INITIAL_STATE, action) => {
           schedule: payload.schedule,
         },
       };
-    case ERROR_UPDATE_SCHEDULE:
+    case SUCCESS_UPDATE_SESSION_TYPE:
       return {
         ...state,
-        error: payload.error,
         loading: false,
+        currentUser: {
+          ...state.currentUser,
+          session_type: payload.sessionType,
+        },
       };
     default:
       return {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Card from '@material-ui/core/Card';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
@@ -11,16 +10,13 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import useStyles from './TeacherProfilStyles';
-import authHeader from '../authHeader';
-import BACKEND from '../backend';
 import { setFlash } from '../actions/layoutCreators';
-import { setUser } from '../actions/authCreators';
+import { setUser, updateProfil } from '../actions/authCreators';
 
 const TeacherProfil = ({
   currentUser,
-  setFlash,
   categories,
-  setUser,
+  updateProfil,
 }) => {
   const classes = useStyles();
   const {
@@ -62,19 +58,11 @@ const TeacherProfil = ({
   }, [categories]);
 
   const onSubmit = data => {
-    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_profil`, {
+    updateProfil({
       ...data,
       what_I_can_do: data.whatICanDo,
       categories: categoriesList,
-    }, { headers: authHeader })
-      .then(res => {
-        setFlash({ open: true, message: 'Profile updated with success', severity: 'success' });
-        setUser(
-          res.data.current_user,
-          'Teacher',
-          res.data.categories,
-        );
-      }).catch(() => setFlash({ open: true, message: 'Error, try later', severity: 'error' }));
+    }, currentUser, 'teachers');
   };
 
   return (
@@ -207,6 +195,7 @@ const mapDispatchToProps = dispatch => ({
   setUser: (currentUser, accountType, categories) => dispatch(
     setUser(currentUser, accountType, categories),
   ),
+  updateProfil: (data, currentUser, type) => dispatch(updateProfil(data, currentUser, type)),
 });
 
 TeacherProfil.propTypes = {
@@ -219,9 +208,8 @@ TeacherProfil.propTypes = {
     id: PropTypes.number,
     photo: PropTypes.string,
   }).isRequired,
-  setFlash: PropTypes.func.isRequired,
   categories: PropTypes.arrayOf(Object).isRequired,
-  setUser: PropTypes.func.isRequired,
+  updateProfil: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeacherProfil);

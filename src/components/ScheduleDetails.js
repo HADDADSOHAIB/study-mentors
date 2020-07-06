@@ -1,21 +1,16 @@
 import React from 'react';
 import uid from 'uid';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { setSchedule, updateSchedule } from '../actions/authCreators';
 import useStyles from './ScheduleDetailsStyles';
-import authHeadre from '../authHeader';
-import BACKEND from '../backend';
 import { setFlash } from '../actions/layoutCreators';
 
 const ScheduleDetails = ({
   schedule,
-  setSchedule,
   currentUser,
-  setFlash,
   options,
   updateSchedule,
 }) => {
@@ -25,14 +20,6 @@ const ScheduleDetails = ({
     const currentSchedule = schedule;
     currentSchedule[day] = currentSchedule[day].filter((el, j) => i !== j);
     updateSchedule(currentSchedule, currentUser);
-    // axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_schedule`, {
-    //   schedule: currentSchedule,
-    // }, { headers: authHeadre }).then(() => {
-    //   setSchedule(currentSchedule);
-    //   setFlash({ open: true, message: 'schedule updated', severity: 'success' });
-    // }).catch(() => {
-    //   setFlash({ open: true, message: 'There is an error', severity: 'error' });
-    // });
   };
 
   const sessionChip = (session, i, day) => (options ? (
@@ -180,11 +167,9 @@ ScheduleDetails.propTypes = {
     saturday: PropTypes.arrayOf(Object),
     sunday: PropTypes.arrayOf(Object),
   }).isRequired,
-  setSchedule: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({
     id: PropTypes.number,
   }).isRequired,
-  setFlash: PropTypes.func.isRequired,
   options: PropTypes.bool,
   updateSchedule: PropTypes.func.isRequired,
 };

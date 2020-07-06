@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Card from '@material-ui/core/Card';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { useForm } from 'react-hook-form';
@@ -9,15 +8,12 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import useStyles from './StudentProfilStyles';
-import authHeader from '../authHeader';
-import BACKEND from '../backend';
 import { setFlash } from '../actions/layoutCreators';
-import { setUser } from '../actions/authCreators';
+import { setUser, updateProfil } from '../actions/authCreators';
 
 const StudentProfil = ({
   currentUser,
-  setFlash,
-  setUser,
+  updateProfil,
 }) => {
   const classes = useStyles();
   const {
@@ -27,17 +23,7 @@ const StudentProfil = ({
   } = useForm();
 
   const onSubmit = data => {
-    axios.put(`${BACKEND}/api/v1/students/${currentUser.id}/update_profil`, {
-      ...data,
-    }, { headers: authHeader })
-      .then(res => {
-        setFlash({ open: true, message: 'Profile updated with success', severity: 'success' });
-        setUser(
-          res.data.current_user,
-          'Student',
-          [],
-        );
-      }).catch(() => setFlash({ open: true, message: 'Error, try later', severity: 'error' }));
+    updateProfil(data, currentUser, 'students');
   };
 
   const [fullname, setFullName] = useState(currentUser.fullname);
@@ -115,6 +101,7 @@ const mapDispatchToProps = dispatch => ({
   setUser: (currentUser, accountType, categories) => dispatch(
     setUser(currentUser, accountType, categories),
   ),
+  updateProfil: (data, currentUser, type) => dispatch(updateProfil(data, currentUser, type)),
 });
 
 StudentProfil.propTypes = {
@@ -124,8 +111,7 @@ StudentProfil.propTypes = {
     phone: PropTypes.string,
     id: PropTypes.number,
   }).isRequired,
-  setFlash: PropTypes.func.isRequired,
-  setUser: PropTypes.func.isRequired,
+  updateProfil: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(StudentProfil);

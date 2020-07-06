@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Card from '@material-ui/core/Card';
 import uid from 'uid';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import FormControl from '@material-ui/core/FormControl';
@@ -15,42 +14,30 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import useStyles from './TeacherScheduleStyles';
 import ScheduleDetails from './ScheduleDetails';
-import { setSchedule } from '../actions/authCreators';
+import { updateSchedule, updateSessionType } from '../actions/authCreators';
 import { setFlash } from '../actions/layoutCreators';
 import { lessThen, biggerThen } from '../utils/dateCompare';
-import authHeadre from '../authHeader';
-import BACKEND from '../backend';
 
-const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
+const TeacherSchedule = ({
+  currentUser,
+  setFlash,
+  updateSchedule,
+  updateSessionType,
+}) => {
   const classes = useStyles();
 
   const [newSessionType, setNewSessionType] = useState('');
-  const [sessionsTypes, setSessionsTypes] = useState(currentUser.session_type ? currentUser.session_type.split(',') : '');
 
   const handleNewSessionTypeChange = e => setNewSessionType(e.target.value);
   const handleDeleteSessionType = i => {
-    const newSessionTypes = [...sessionsTypes.filter((type, j) => i !== j)];
-    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_session_type`, {
-      session_type: newSessionTypes.join(','),
-    }, { headers: authHeadre }).then(() => {
-      setSessionsTypes(newSessionTypes);
-      setFlash({ open: true, message: 'session deleted', severity: 'success' });
-    }).catch(() => {
-      setFlash({ open: true, message: 'There is an error', severity: 'error' });
-    });
+    const newSessionTypes = [...currentUser.session_type.split(',').filter((type, j) => i !== j)].join(',');
+    updateSessionType(newSessionTypes, currentUser);
   };
 
   const handleAddSessionType = () => {
-    const newSessionTypes = [...sessionsTypes, newSessionType];
-    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_session_type`, {
-      session_type: newSessionTypes.join(','),
-    }, { headers: authHeadre }).then(() => {
-      setSessionsTypes(newSessionTypes);
-      setNewSessionType('');
-      setFlash({ open: true, message: 'session added', severity: 'success' });
-    }).catch(() => {
-      setFlash({ open: true, message: 'There is an error', severity: 'error' });
-    });
+    const newSessionTypes = [...currentUser.session_type.split(','), newSessionType].join(',');
+    updateSessionType(newSessionTypes, currentUser);
+    setNewSessionType('');
   };
 
   const [day, setDay] = useState('');
@@ -99,18 +86,11 @@ const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
           currentSchedule[day].push(`${from}-${to}`);
         }
       }
-      axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_schedule`, {
-        schedule: currentSchedule,
-      }, { headers: authHeadre }).then(() => {
-        setNewSchedule(currentSchedule);
-        setSchedule(currentSchedule);
-        setFrom('');
-        setTo('');
-        setDay('');
-        setFlash({ open: true, message: 'schedule updated', severity: 'success' });
-      }).catch(() => {
-        setFlash({ open: true, message: 'There is an error', severity: 'error' });
-      });
+      updateSchedule(currentSchedule, currentUser);
+      setNewSchedule(currentSchedule);
+      setFrom('');
+      setTo('');
+      setDay('');
     }
   };
 
@@ -142,11 +122,9 @@ const TeacherSchedule = ({ currentUser, setSchedule, setFlash }) => {
           </div>
           <div className={classes.chipsTypes}>
             {
-              sessionsTypes.length ? sessionsTypes.map((session, i) => (
+              currentUser.session_type.split(',').map((session, i) => (
                 <Chip label={session} key={uid(12)} onDelete={() => handleDeleteSessionType(i)} color="primary" variant="outlined" />
-              )) : (
-                <p>You didn&apos;t set session types yet</p>
-              )
+              ))
             }
           </div>
         </div>
@@ -204,8 +182,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setSchedule: schedule => dispatch(setSchedule(schedule)),
   setFlash: flash => dispatch(setFlash(flash)),
+  updateSchedule: (schedule, user) => dispatch(updateSchedule(schedule, user)),
+  updateSessionType: (sessionType, user) => dispatch(updateSessionType(sessionType, user)),
 });
 
 TeacherSchedule.propTypes = {
@@ -214,8 +193,9 @@ TeacherSchedule.propTypes = {
     session_type: PropTypes.string,
     id: PropTypes.number,
   }).isRequired,
-  setSchedule: PropTypes.func.isRequired,
   setFlash: PropTypes.func.isRequired,
+  updateSchedule: PropTypes.func.isRequired,
+  updateSessionType: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeacherSchedule);
