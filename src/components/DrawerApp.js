@@ -23,13 +23,10 @@ import PersonIcon from '@material-ui/icons/Person';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import BACKEND from '../backend';
-import authHeader from '../authHeader';
 import useStyles from './DrawerAppStyles';
 import { closeDrawer } from '../actions/layoutCreators';
 import { selectCategory } from '../actions/teacherCreators';
-import { setUser, clearUser } from '../actions/authCreators';
+import { setUser, fetchUserByToken } from '../actions/authCreators';
 
 function DrawerApp({
   closeDrawer,
@@ -39,8 +36,8 @@ function DrawerApp({
   history,
   selectCategory,
   setUser,
-  clearUser,
   currentUser,
+  fetchUserByToken,
 }) {
   const classes = useStyles();
   const theme = useTheme();
@@ -63,15 +60,7 @@ function DrawerApp({
   };
 
   useEffect(() => {
-    axios.get(`${BACKEND}/api/v1/login/get_user_by_token`, { headers: authHeader })
-      .then(res => {
-        setUser(
-          res.data.current_user,
-          res.data.account_type,
-          res.data.categories || [],
-        );
-      })
-      .catch(() => clearUser);
+    fetchUserByToken();
     return () => '';
   }, []);
 
@@ -209,19 +198,19 @@ DrawerApp.propTypes = {
     pathname: PropTypes.string.isRequired,
   }).isRequired,
   selectCategory: PropTypes.func.isRequired,
-  clearUser: PropTypes.func.isRequired,
   setUser: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({}).isRequired,
   history: PropTypes.shape([]).isRequired,
+  fetchUserByToken: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
   closeDrawer: () => dispatch(closeDrawer()),
   selectCategory: category => dispatch(selectCategory(category)),
-  clearUser: () => dispatch(clearUser()),
   setUser: (currentUser, accountType, categories) => dispatch(
     setUser(currentUser, accountType, categories),
   ),
+  fetchUserByToken: () => dispatch(fetchUserByToken()),
 });
 
 const mapStateToProps = state => ({
