@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-import { setSchedule } from '../actions/authCreators';
+import { setSchedule, updateSchedule } from '../actions/authCreators';
 import useStyles from './ScheduleDetailsStyles';
 import authHeadre from '../authHeader';
 import BACKEND from '../backend';
@@ -17,21 +17,22 @@ const ScheduleDetails = ({
   currentUser,
   setFlash,
   options,
+  updateSchedule,
 }) => {
   const classes = useStyles();
 
   const handleDeleteSession = (day, i) => {
     const currentSchedule = schedule;
     currentSchedule[day] = currentSchedule[day].filter((el, j) => i !== j);
-
-    axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_schedule`, {
-      schedule: currentSchedule,
-    }, { headers: authHeadre }).then(() => {
-      setSchedule(currentSchedule);
-      setFlash({ open: true, message: 'schedule updated', severity: 'success' });
-    }).catch(() => {
-      setFlash({ open: true, message: 'There is an error', severity: 'error' });
-    });
+    updateSchedule(currentSchedule, currentUser);
+    // axios.put(`${BACKEND}/api/v1/teachers/${currentUser.id}/update_schedule`, {
+    //   schedule: currentSchedule,
+    // }, { headers: authHeadre }).then(() => {
+    //   setSchedule(currentSchedule);
+    //   setFlash({ open: true, message: 'schedule updated', severity: 'success' });
+    // }).catch(() => {
+    //   setFlash({ open: true, message: 'There is an error', severity: 'error' });
+    // });
   };
 
   const sessionChip = (session, i, day) => (options ? (
@@ -166,6 +167,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setSchedule: schedule => dispatch(setSchedule(schedule)),
   setFlash: flash => dispatch(setFlash(flash)),
+  updateSchedule: (schedule, user) => dispatch(updateSchedule(schedule, user)),
 });
 
 ScheduleDetails.propTypes = {
@@ -184,6 +186,7 @@ ScheduleDetails.propTypes = {
   }).isRequired,
   setFlash: PropTypes.func.isRequired,
   options: PropTypes.bool,
+  updateSchedule: PropTypes.func.isRequired,
 };
 
 ScheduleDetails.defaultProps = {
