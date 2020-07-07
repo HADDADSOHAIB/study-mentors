@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import CloseIcon from '@material-ui/icons/Close';
@@ -12,33 +12,41 @@ const Flash = ({
   severity,
   message,
   clearFlash,
-}) => (
-  <Collapse in={open}>
-    {
-      open && (
-        <Alert
-          severity={severity}
-          action={
-            (
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  clearFlash();
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            )
-          }
-        >
-          {message}
-        </Alert>
-      )
+}) => {
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => clearFlash(), 2000);
     }
-  </Collapse>
-);
+    return () => '';
+  }, [open]);
+  return (
+    <Collapse in={open}>
+      {
+        open && (
+          <Alert
+            severity={severity}
+            action={
+              (
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    clearFlash();
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              )
+            }
+          >
+            {message}
+          </Alert>
+        )
+      }
+    </Collapse>
+  );
+};
 
 const mapStateToProps = state => ({
   open: state.layout.flash.open,

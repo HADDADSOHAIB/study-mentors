@@ -20,7 +20,10 @@ import TeacherPage from '../pages/TeacherPage';
 import MakeBookingPage from '../pages/MakeBookingPage';
 import MyBookingsPage from '../pages/MyBookingsPage';
 
-function App({ openDrawer, open }) {
+function App({
+  openDrawer,
+  open,
+}) {
   const classes = useStyles();
 
   return (
