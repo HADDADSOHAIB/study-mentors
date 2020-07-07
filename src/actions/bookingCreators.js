@@ -36,7 +36,7 @@ const fetchMyBooking = (currentUser, accountType) => dispatch => {
     account_type: accountType,
     id: currentUser.id,
   }, { headers: { Authorization: `Bearer ${localStorage.getItem('token_auth')}` } })
-    .then(res => dispatch(successFetchingMyBooking(res.data.bookings)))
+    .then(res => dispatch(successFetchingMyBooking(res.data)))
     .then(err => dispatch(errorFetchingMyBooking(err)));
 };
 
