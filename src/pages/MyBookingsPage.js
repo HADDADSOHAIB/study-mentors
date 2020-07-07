@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,22 +8,21 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import authHeader from '../authHeader';
-import BACKEND from '../backend';
 import formatter from '../utils/minuteFormatter';
 import useStyles from './MyBookingsPageStyles';
+import { fetchMyBooking } from '../actions/bookingCreators';
 
-function MyBookingsPage({ currentUser, accountType }) {
+function MyBookingsPage({
+  currentUser,
+  accountType,
+  fetchMyBooking,
+  bookings,
+}) {
   const classes = useStyles();
 
-  const [bookings, setBookings] = useState([]);
   useEffect(() => {
     if (Object.keys(currentUser).length && accountType) {
-      axios.post(`${BACKEND}/api/v1/bookings/my_bookings`, {
-        account_type: accountType,
-        id: currentUser.id,
-      }, { headers: authHeader })
-        .then(res => setBookings(res.data.bookings));
+      fetchMyBooking(currentUser, accountType);
     }
     return () => '';
   }, [currentUser, accountType]);
@@ -84,6 +82,11 @@ function MyBookingsPage({ currentUser, accountType }) {
 const mapStateToProps = state => ({
   currentUser: state.auth.currentUser,
   accountType: state.auth.accountType,
+  bookings: state.booking.myBookings,
+});
+
+const mapDispatchToProps = dispatch => ({
+  fetchMyBooking: (user, type) => dispatch(fetchMyBooking(user, type)),
 });
 
 MyBookingsPage.propTypes = {
@@ -91,6 +94,8 @@ MyBookingsPage.propTypes = {
     id: PropTypes.number,
   }).isRequired,
   accountType: PropTypes.string.isRequired,
+  fetchMyBooking: PropTypes.func.isRequired,
+  bookings: PropTypes.arrayOf(Object).isRequired,
 };
 
-export default connect(mapStateToProps)(MyBookingsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(MyBookingsPage);

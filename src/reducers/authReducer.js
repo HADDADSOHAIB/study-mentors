@@ -52,6 +52,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
       };
     case CLEAR_USER:
       return {
+        ...state,
         currentUser: {},
         accountType: '',
         categories: [],
