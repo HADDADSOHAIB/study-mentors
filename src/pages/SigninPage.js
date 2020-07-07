@@ -54,20 +54,9 @@ const Signin = ({
           </Tabs>
         </AppBar>
         <div>
-          { value === 0
-            && (
-              <Typography color="textPrimary" variant="h6" className={classes.title}>
-                Sign In as Teacher
-              </Typography>
-            )}
-        </div>
-        <div>
-          {value === 1
-            && (
-              <Typography color="textPrimary" variant="h6" className={classes.title}>
-                Sign In as Student
-              </Typography>
-            )}
+          <Typography color="textPrimary" variant="h6" className={classes.title}>
+            {`Sign In as ${!value ? 'Teacher' : 'Student'}`}
+          </Typography>
         </div>
         <CardContent>
           <form className={classes.from} autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
