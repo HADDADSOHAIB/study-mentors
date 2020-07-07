@@ -14,6 +14,9 @@ import {
   START_SIGN_IN,
   SUCCESS_SIGN_IN,
   ERROR_SIGN_IN,
+  START_SIGN_UP,
+  SUCCESS_SIGN_UP,
+  ERROR_SIGN_UP,
 } from '../actions/authTypes';
 import {
   CLEAR_REDIRECT,
@@ -45,6 +48,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case START_UPDATE_PROFIL:
     case START_UPDATE_SESSION_TYPE:
     case START_SIGN_IN:
+    case START_SIGN_UP:
       return {
         ...state,
         loading: true,
@@ -54,6 +58,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case ERROR_UPDATE_PROFIL:
     case ERROR_UPDATE_SESSION_TYPE:
     case ERROR_SIGN_IN:
+    case ERROR_SIGN_UP:
       return {
         ...state,
         error: payload.error,
@@ -90,6 +95,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         },
       };
     case SUCCESS_SIGN_IN:
+    case SUCCESS_SIGN_UP:
       return {
         ...state,
         loading: false,

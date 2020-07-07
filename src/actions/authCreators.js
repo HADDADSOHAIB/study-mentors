@@ -17,6 +17,9 @@ import {
   START_SIGN_IN,
   SUCCESS_SIGN_IN,
   ERROR_SIGN_IN,
+  START_SIGN_UP,
+  SUCCESS_SIGN_UP,
+  ERROR_SIGN_UP,
 } from './authTypes';
 
 const setUser = (currentUser, accountType, categories) => ({
@@ -197,6 +200,53 @@ const signIn = (email, password, type) => dispatch => {
   });
 };
 
+const startSignUp = () => ({
+  type: START_SIGN_UP,
+});
+
+const errorSignUp = error => ({
+  type: ERROR_SIGN_UP,
+  payload: {
+    error,
+  },
+});
+
+const successSignUp = () => ({
+  type: SUCCESS_SIGN_UP,
+});
+
+const signUp = (email, fullname, password, type) => dispatch => {
+  dispatch(startSignUp());
+  axios.post(`${BACKEND}/api/v1/signup`, {
+    user: {
+      email,
+      fullname,
+      password,
+    },
+    account_type: type,
+  }).then(res => {
+    localStorage.setItem('token_auth', res.data.access);
+    dispatch(setFlash({
+      message: 'account created successfully',
+      open: true,
+      severity: 'success',
+    }));
+    dispatch(setUser(
+      res.data.current_user,
+      type,
+      res.data.categories,
+    ));
+    dispatch(successSignUp());
+  }).catch(err => {
+    dispatch(setFlash({
+      message: 'Error, try later',
+      open: true,
+      severity: 'error',
+    }));
+    dispatch(errorSignUp(err));
+  });
+};
+
 export {
   clearUser,
   setUser,
@@ -206,4 +256,5 @@ export {
   updateProfil,
   updateSessionType,
   signIn,
+  signUp,
 };

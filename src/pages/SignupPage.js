@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -13,10 +13,13 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import useStyles from './SignupPageStyles';
 import BACKEND from '../backend';
-import { setFlash } from '../actions/layoutCreators';
-import { setUser } from '../actions/authCreators';
+import { signUp } from '../actions/authCreators';
 
-const Signup = ({ history, setFlash, setUser }) => {
+const Signup = ({
+  history,
+  redirect,
+  signUp,
+}) => {
   const classes = useStyles();
   const {
     register,
@@ -34,40 +37,20 @@ const Signup = ({ history, setFlash, setUser }) => {
   const handlePassword = e => setPassword(e.target.value);
   const handlePasswordConfirmation = e => setPasswordConfirmation(e.target.value);
 
+  useEffect(() => {
+    if (redirect) {
+      history.push('/');
+    }
+    return () => '';
+  }, [redirect]);
+
   const onSubmit = data => {
     const {
       email,
       fullname,
       password,
     } = data;
-
-    axios.post(`${BACKEND}/api/v1/signup`, {
-      user: {
-        email,
-        fullname,
-        password,
-      },
-      account_type: value === 0 ? 'Teacher' : 'Student',
-    }).then(res => {
-      localStorage.setItem('token_auth', res.data.access);
-      history.push('/');
-      setFlash({
-        message: 'account created successfully',
-        open: true,
-        severity: 'success',
-      });
-      setUser(
-        res.data.current_user,
-        value === 0 ? 'Teacher' : 'Student',
-        res.data.categories,
-      );
-    }).catch(() => {
-      setFlash({
-        message: 'Error, try later',
-        open: true,
-        severity: 'error',
-      });
-    });
+    signUp(email, fullname, password, value === 0 ? 'Teacher' : 'Student');
   };
 
   const shouldMatch = () => password === passwordConfirmation;
@@ -192,15 +175,16 @@ const Signup = ({ history, setFlash, setUser }) => {
 
 Signup.propTypes = {
   history: PropTypes.shape([]).isRequired,
-  setFlash: PropTypes.func.isRequired,
-  setUser: PropTypes.func.isRequired,
+  signUp: PropTypes.func.isRequired,
+  redirect: PropTypes.bool.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
-  setFlash: flash => dispatch(setFlash(flash)),
-  setUser: (currentUser, accountType, categories) => dispatch(
-    setUser(currentUser, accountType, categories),
-  ),
+  signUp: (email, fullname, password, type) => dispatch(signUp(email, fullname, password, type)),
 });
 
-export default connect(null, mapDispatchToProps)(Signup);
+const mapStateToProps = state => ({
+  redirect: state.auth.redirect,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);

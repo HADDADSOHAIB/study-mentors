@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -15,66 +14,66 @@ import Avatar from '@material-ui/core/Avatar';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import makeStyle from './TeacherPageStyles';
-import BACKEND from '../backend';
 import ScheduleDetails from '../components/ScheduleDetails';
+import { fetchSelectedTeacher } from '../actions/teacherCreators';
 
-const TeacherPage = ({ match, history, accountType }) => {
+const TeacherPage = ({
+  match,
+  history,
+  accountType,
+  fetchSelectedTeacher,
+  selectedTeacher,
+}) => {
   const classes = makeStyle();
-  const [teacher, setTeacher] = useState(null);
-  const [categories, setCategories] = useState(null);
 
   useEffect(() => {
-    axios.get(`${BACKEND}/api/v1/teachers/${match.params.id}`)
-      .then(res => {
-        setTeacher(res.data.teacher);
-        setCategories(res.data.categories);
-      });
+    fetchSelectedTeacher(match.params.id);
     return () => '';
   }, []);
 
   return (
     <div>
       {
-        teacher ? (
+        selectedTeacher.teacher ? (
           <div className={classes.root}>
             <div className={classes.image}>
               <Card className={classes.card}>
                 <CardMedia
                   className={classes.media}
-                  image={(teacher && teacher.photo) || '/teacher.jpg'}
+                  image={(selectedTeacher.teacher && selectedTeacher.teacher.photo) || '/teacher.jpg'}
                   title="teacher card"
                 />
                 <CardHeader
                   avatar={
                     (
                       <Avatar aria-label="recipe" className={classes.avatar}>
-                        {teacher && teacher.fullname[0]}
+                        {selectedTeacher.teacher && selectedTeacher.teacher.fullname[0]}
                       </Avatar>
                     )
                   }
-                  title={teacher && teacher.fullname}
-                  subheader={teacher && teacher.email}
+                  title={selectedTeacher.teacher && selectedTeacher.teacher.fullname}
+                  subheader={selectedTeacher.teacher && selectedTeacher.teacher.email}
                 />
                 <CardContent>
                   <Typography variant="h6" color="textPrimary" align="center" component="p">
                     what I can do
                   </Typography>
                   <Typography variant="body1" align="center" component="p">
-                    { (teacher && teacher.what_I_can_do) || 'no information is provided by the teacher'}
+                    { (selectedTeacher.teacher && selectedTeacher.teacher.what_I_can_do) || 'no information is provided by the teacher'}
                   </Typography>
                   <Typography variant="h6" color="textPrimary" align="center" component="p">
                     Bio
                   </Typography>
                   <Typography variant="body1" align="center" component="p">
-                    { (teacher && teacher.bio) || 'no information is provided by the teacher'}
+                    { (selectedTeacher.teacher && selectedTeacher.teacher.bio) || 'no information is provided by the teacher'}
                   </Typography>
                   <Typography variant="h6" color="textPrimary" align="center" component="p">
                     Catgories
                   </Typography>
                   <div className={classes.categories}>
                     {
-                      categories && categories.length ? (
-                        categories.map(category => (
+                      selectedTeacher.categories && selectedTeacher.categories.length ? (
+                        selectedTeacher.categories.map(category => (
                           <Chip label={category.name} key={uid(12)} color="primary" variant="outlined" />
                         ))
                       ) : (
@@ -93,10 +92,11 @@ const TeacherPage = ({ match, history, accountType }) => {
                   </Tabs>
                 </AppBar>
                 <CardContent>
-                  { teacher && (<ScheduleDetails schedule={teacher.schedule} />)}
+                  { selectedTeacher.teacher
+                    && (<ScheduleDetails schedule={selectedTeacher.teacher.schedule} />)}
                   { accountType === 'Student' ? (
                     <div className={classes.book}>
-                      <Button variant="outlined" color="primary" onClick={() => history.push(`/teachers/${teacher.id}/book`)}>
+                      <Button variant="outlined" color="primary" onClick={() => history.push(`/teachers/${selectedTeacher.teacher.id}/book`)}>
                         Book an appoitements
                       </Button>
                     </div>
@@ -121,10 +121,29 @@ TeacherPage.propTypes = {
   }).isRequired,
   history: PropTypes.shape([]).isRequired,
   accountType: PropTypes.string.isRequired,
+  selectedTeacher: PropTypes.shape({
+    teacher: PropTypes.shape({
+      id: PropTypes.number,
+      session_type: PropTypes.string,
+      fullname: PropTypes.string,
+      email: PropTypes.string,
+      schedule: PropTypes.shape({}),
+      bio: PropTypes.string,
+      what_I_can_do: PropTypes.string,
+      photo: PropTypes.string,
+    }),
+    categories: PropTypes.arrayOf(Object),
+  }).isRequired,
+  fetchSelectedTeacher: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   accountType: state.auth.accountType,
+  selectedTeacher: state.teacher.selectedTeacher,
 });
 
-export default connect(mapStateToProps)(TeacherPage);
+const mapDispatchToProps = dispatch => ({
+  fetchSelectedTeacher: id => dispatch(fetchSelectedTeacher(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TeacherPage);
