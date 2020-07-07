@@ -30,119 +30,27 @@ const ScheduleDetails = ({
 
   return (
     <div>
-      <div className={classes.session}>
-        <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="body1" display="inline">
-            Monday:
-          </Typography>
-        </div>
-        <div className={classes.chips}>
-          {
-            schedule.monday && schedule.monday.length ? schedule.monday.map((session, i) => (
-              sessionChip(session, i, 'monday')
-            )) : (
-              <p className={classes.chip}>no schedule is set for this day</p>
-            )
-          }
-        </div>
-      </div>
-      <div className={classes.session}>
-        <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="body1" display="inline">
-            Tuesday:
-          </Typography>
-        </div>
-        <div className={classes.chips}>
-          {
-            schedule.tuesday && schedule.tuesday.length ? schedule.tuesday.map((session, i) => (
-              sessionChip(session, i, 'tuesday')
-            )) : (
-              <p className={classes.chip}>no schedule is set for this day</p>
-            )
-          }
-        </div>
-      </div>
-      <div className={classes.session}>
-        <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="body1" display="inline">
-            Wednesday:
-          </Typography>
-        </div>
-        <div className={classes.chips}>
-          {
-            schedule.wednesday && schedule.wednesday.length
-              ? schedule.wednesday.map((session, i) => (
-                sessionChip(session, i, 'wednesday')
-              )) : (
-                <p className={classes.chip}>no schedule is set for this day</p>
-              )
-          }
-        </div>
-      </div>
-      <div className={classes.session}>
-        <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="body1" display="inline">
-            Thursday:
-          </Typography>
-        </div>
-        <div className={classes.chips}>
-          {
-            schedule.thursday && schedule.thursday.length ? schedule.thursday.map((session, i) => (
-              sessionChip(session, i, 'thursday')
-            )) : (
-              <p className={classes.chip}>no schedule is set for this day</p>
-            )
-          }
-        </div>
-      </div>
-      <div className={classes.session}>
-        <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="body1" display="inline">
-            Friday:
-          </Typography>
-        </div>
-        <div className={classes.chips}>
-          {
-            schedule.friday && schedule.friday.length ? schedule.friday.map((session, i) => (
-              sessionChip(session, i, 'friday')
-            )) : (
-              <p className={classes.chip}>no schedule is set for this day</p>
-            )
-          }
-        </div>
-      </div>
-      <div className={classes.session}>
-        <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="body1" display="inline">
-            Saturday:
-          </Typography>
-        </div>
-        <div className={classes.chips}>
-          {
-            schedule.saturday && schedule.saturday.length ? schedule.saturday.map((session, i) => (
-              sessionChip(session, i, 'saturday')
-            )) : (
-              <p className={classes.chip}>no schedule is set for this day</p>
-            )
-          }
-        </div>
-      </div>
-      <div className={classes.session}>
-        <div className={classes.sessionTitles}>
-          <Typography color="textPrimary" variant="body1" display="inline">
-            Sunday:
-          </Typography>
-        </div>
-        <div className={classes.chips}>
-          {
-            schedule.sunday && schedule.sunday.length ? schedule.sunday.map((session, i) => (
-              sessionChip(session, i, 'sunday')
-            )) : (
-              <p className={classes.chip}>no schedule is set for this day</p>
-            )
-          }
-        </div>
-      </div>
+      {
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
+          <div className={classes.session} key={uid(12)}>
+            <div className={classes.sessionTitles}>
+              <Typography color="textPrimary" variant="body1" display="inline">
+                {day}
+                :
+              </Typography>
+            </div>
+            <div className={classes.chips}>
+              {
+                schedule[day] && schedule[day].length ? schedule[day].map((session, i) => (
+                  sessionChip(session, i, day)
+                )) : (
+                  <p className={classes.chip}>no schedule is set for this day</p>
+                )
+              }
+            </div>
+          </div>
+        ))
+      }
     </div>
   );
 };
