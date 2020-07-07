@@ -26,55 +26,53 @@ const TeacherSchedule = ({
 }) => {
   const classes = useStyles();
 
-  const [newSessionType, setNewSessionType] = useState('');
+  const [state, setState] = useState({
+    newSessionType: '',
+    day: '',
+    from: '',
+    to: '',
+    newSchedule: currentUser.schedule,
+  });
 
-  const handleNewSessionTypeChange = e => setNewSessionType(e.target.value);
+  const handleChange = ({ target: { name, value } }) => setState({ ...state, [name]: value });
+
   const handleDeleteSessionType = i => {
     const newSessionTypes = [...currentUser.session_type.split(',').filter((type, j) => i !== j)].join(',');
     updateSessionType(newSessionTypes, currentUser);
   };
 
   const handleAddSessionType = () => {
-    const newSessionTypes = [...currentUser.session_type.split(','), newSessionType].join(',');
+    const newSessionTypes = [...currentUser.session_type.split(','), state.newSessionType].join(',');
     updateSessionType(newSessionTypes, currentUser);
-    setNewSessionType('');
+    setState({ ...state, newSessionType: '' });
   };
 
-  const [day, setDay] = useState('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  const [newSchedule, setNewSchedule] = useState(currentUser.schedule);
-
-  const handleDayChange = e => setDay(e.target.value);
-  const handleToChange = e => setTo(e.target.value);
-  const handleFromChange = e => setFrom(e.target.value);
-
   const handleAddSchedule = () => {
-    let currentSchedule = newSchedule;
-    if (!day) {
+    let currentSchedule = state.newSchedule;
+    if (!state.day) {
       setFlash({
         severity: 'warning',
         message: 'select a day first',
         open: true,
       });
-    } else if (!to.match(/^\d\d:\d\d$/) || !from.match(/^\d\d:\d\d$/)) {
+    } else if (!state.to.match(/^\d\d:\d\d$/) || !state.from.match(/^\d\d:\d\d$/)) {
       setFlash({
         severity: 'warning',
         message: 'The to and from fields should be hours, ex: 14:00, 17:00',
         open: true,
       });
     } else {
-      if (currentSchedule && !currentSchedule[day]) {
-        currentSchedule[day] = [`${from}-${to}`];
+      if (currentSchedule && !currentSchedule[state.day]) {
+        currentSchedule[state.day] = [`${state.from}-${state.to}`];
       } else if (!currentSchedule) {
         currentSchedule = {
-          [day]: [`${from}-${to}`],
+          [state.day]: [`${state.from}-${state.to}`],
         };
-      } else if (currentSchedule && currentSchedule[day]) {
-        const overlappedSessions = currentSchedule[day].filter(session => {
+      } else if (currentSchedule && currentSchedule[state.day]) {
+        const overlappedSessions = currentSchedule[state.day].filter(session => {
           const [sessionFrom, sessionTo] = session.split('-');
-          return (lessThen(sessionFrom, from) && biggerThen(sessionTo, from))
-            || (lessThen(sessionFrom, to) && biggerThen(sessionTo, to));
+          return (lessThen(sessionFrom, state.from) && biggerThen(sessionTo, state.from))
+            || (lessThen(sessionFrom, state.to) && biggerThen(sessionTo, state.to));
         });
         if (overlappedSessions.length) {
           setFlash({
@@ -83,14 +81,17 @@ const TeacherSchedule = ({
             open: true,
           });
         } else {
-          currentSchedule[day].push(`${from}-${to}`);
+          currentSchedule[state.day].push(`${state.from}-${state.to}`);
         }
       }
       updateSchedule(currentSchedule, currentUser);
-      setNewSchedule(currentSchedule);
-      setFrom('');
-      setTo('');
-      setDay('');
+      setState({
+        ...state,
+        day: '',
+        from: '',
+        to: '',
+        newSchedule: currentSchedule,
+      });
     }
   };
 
@@ -107,8 +108,9 @@ const TeacherSchedule = ({
             variant="outlined"
             size="small"
             placeholder="online, in place ...."
-            value={newSessionType}
-            onChange={handleNewSessionTypeChange}
+            name="newSessionType"
+            value={state.newSessionType}
+            onChange={handleChange}
           />
           <Button variant="outlined" color="primary" onClick={handleAddSessionType}>
             add
@@ -132,8 +134,9 @@ const TeacherSchedule = ({
           <InputLabel id="days">Choose a day</InputLabel>
           <Select
             labelId="days"
-            value={day}
-            onChange={handleDayChange}
+            name="day"
+            value={state.day}
+            onChange={handleChange}
           >
             <MenuItem value="monday">Monday</MenuItem>
             <MenuItem value="tuesday">Tuesday</MenuItem>
@@ -151,8 +154,9 @@ const TeacherSchedule = ({
             variant="outlined"
             size="small"
             placeholder="ex: 14:00"
-            value={from}
-            onChange={handleFromChange}
+            name="from"
+            value={state.from}
+            onChange={handleChange}
           />
           <TextField
             label="available to"
@@ -160,8 +164,9 @@ const TeacherSchedule = ({
             variant="outlined"
             size="small"
             placeholder="ex: 16:00"
-            value={to}
-            onChange={handleToChange}
+            name="to"
+            value={state.to}
+            onChange={handleChange}
           />
           <Button variant="outlined" color="primary" onClick={handleAddSchedule}>
             add

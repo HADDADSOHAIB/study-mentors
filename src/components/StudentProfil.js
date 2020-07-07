@@ -26,11 +26,12 @@ const StudentProfil = ({
     updateProfil(data, currentUser, 'students');
   };
 
-  const [fullname, setFullName] = useState(currentUser.fullname);
-  const [phone, setPhone] = useState(currentUser.phone);
+  const [state, setState] = useState({
+    fullname: currentUser.fullname,
+    phone: currentUser.phone,
+  });
 
-  const handleEmailChange = e => setFullName(e.target.value);
-  const handlePhoneChange = e => setPhone(e.target.value);
+  const handleChange = ({ target: { name, value } }) => setState({ ...state, [name]: value });
 
   return (
     <Card className={classes.card}>
@@ -56,8 +57,8 @@ const StudentProfil = ({
             <TextField
               inputRef={register({ required: true })}
               required
-              value={fullname}
-              onChange={handleEmailChange}
+              value={state.fullname}
+              onChange={handleChange}
               label="full name"
               type="text"
               name="fullname"
@@ -71,8 +72,8 @@ const StudentProfil = ({
           <div className={classes.textField}>
             <TextField
               inputRef={register}
-              value={phone || ''}
-              onChange={handlePhoneChange}
+              value={state.phone || ''}
+              onChange={handleChange}
               label="phone"
               type="text"
               name="phone"

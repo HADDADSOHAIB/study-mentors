@@ -27,15 +27,14 @@ const Signup = ({
     errors,
   } = useForm();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [value, setValue] = useState(0);
-
-  const handleChange = (event, newValue) => setValue(newValue);
-  const handleEmail = e => setEmail(e.target.value);
-  const handlePassword = e => setPassword(e.target.value);
-  const handlePasswordConfirmation = e => setPasswordConfirmation(e.target.value);
+  const [state, setState] = useState({
+    email: '',
+    password: '',
+    passwordConfirmation: '',
+  });
+  const handleChange = ({ target: { name, value } }) => setState({ ...state, [name]: value });
+  const handleValueChange = (event, newValue) => setValue(newValue);
 
   useEffect(() => {
     if (redirect) {
@@ -53,9 +52,9 @@ const Signup = ({
     signUp(email, fullname, password, value === 0 ? 'Teacher' : 'Student');
   };
 
-  const shouldMatch = () => password === passwordConfirmation;
+  const shouldMatch = () => state.password === state.passwordConfirmation;
   const shouldBeUnique = async () => {
-    const unique = await axios.post(`${BACKEND}/api/v1/signup/unique`, { email });
+    const unique = await axios.post(`${BACKEND}/api/v1/signup/unique`, { email: state.email });
     return unique.data.email;
   };
 
@@ -79,7 +78,7 @@ const Signup = ({
     <div className={classes.root}>
       <Card className={classes.card}>
         <AppBar position="static" classes={{ root: classes.appbar }}>
-          <Tabs value={value} onChange={handleChange} centered>
+          <Tabs value={value} onChange={handleValueChange} centered>
             <Tab label="Teacher" id="simple-tab-0" aria-controls="simple-tabpanel-0" />
             <Tab label="Student" id="simple-tab-1" aria-controls="simple-tabpanel-1" />
           </Tabs>
@@ -114,7 +113,7 @@ const Signup = ({
                 size="small"
                 error={!!errors.email}
                 helperText={errors.email ? errorMessage(errors, 'email') : ''}
-                onChange={handleEmail}
+                onChange={handleChange}
               />
             </div>
             <div className={classes.textField}>
@@ -142,8 +141,8 @@ const Signup = ({
                 error={!!errors.password}
                 inputRef={register({ required: true, minLength: 8 })}
                 required
-                value={password}
-                onChange={handlePassword}
+                value={state.password}
+                onChange={handleChange}
                 helperText={errors.password ? errorMessage(errors, 'password') : ''}
               />
               <TextField
@@ -157,8 +156,8 @@ const Signup = ({
                 error={!!errors.passwordConfirmation}
                 helperText={errors.passwordConfirmation ? errorMessage(errors, 'passwordConfirmation') : ''}
                 className={classes.half}
-                value={passwordConfirmation}
-                onChange={handlePasswordConfirmation}
+                value={state.passwordConfirmation}
+                onChange={handleChange}
               />
             </div>
             <div className={classes.submit}>

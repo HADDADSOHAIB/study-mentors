@@ -25,17 +25,15 @@ const TeacherProfil = ({
     errors,
   } = useForm();
 
-  const [fullname, setFullName] = useState(currentUser.fullname);
-  const [phone, setPhone] = useState(currentUser.phone);
-  const [bio, setBio] = useState(currentUser.bio);
-  const [whatICanDo, setWhatICanDo] = useState(currentUser.what_I_can_do);
-  const [photo, setPhoto] = useState(currentUser.photo);
+  const [state, setState] = useState({
+    fullname: currentUser.fullname,
+    phone: currentUser.phone,
+    bio: currentUser.bio,
+    whatICanDo: currentUser.what_I_can_do,
+    photo: currentUser.photo,
+  });
 
-  const handleEmailChange = e => setFullName(e.target.value);
-  const handlePhoneChange = e => setPhone(e.target.value);
-  const handlePhotoChange = e => setPhoto(e.target.value);
-  const handleBioChange = e => setBio(e.target.value);
-  const handleWhatICanDoChange = e => setWhatICanDo(e.target.value);
+  const handleChange = ({ target: { name, value } }) => setState({ ...state, [name]: value });
 
   const [categoriesList, setCategoriesList] = useState({
     maths: false,
@@ -44,7 +42,7 @@ const TeacherProfil = ({
     english: false,
   });
 
-  const handleChange = event => {
+  const handlecategoriesChange = event => {
     setCategoriesList({ ...categoriesList, [event.target.name]: event.target.checked });
   };
 
@@ -89,8 +87,8 @@ const TeacherProfil = ({
             <TextField
               inputRef={register({ required: true })}
               required
-              value={fullname}
-              onChange={handleEmailChange}
+              value={state.fullname}
+              onChange={handleChange}
               label="full name"
               type="text"
               name="fullname"
@@ -104,8 +102,8 @@ const TeacherProfil = ({
           <div className={classes.textField}>
             <TextField
               inputRef={register}
-              value={phone || ''}
-              onChange={handlePhoneChange}
+              value={state.phone || ''}
+              onChange={handleChange}
               label="phone"
               type="text"
               name="phone"
@@ -117,8 +115,8 @@ const TeacherProfil = ({
           <div className={classes.textField}>
             <TextField
               inputRef={register}
-              onChange={handleBioChange}
-              value={bio || ''}
+              onChange={handleChange}
+              value={state.bio || ''}
               label="bio"
               multiline
               rows={2}
@@ -131,8 +129,8 @@ const TeacherProfil = ({
           <div className={classes.textField}>
             <TextField
               inputRef={register}
-              onChange={handleWhatICanDoChange}
-              value={whatICanDo || ''}
+              onChange={handleChange}
+              value={state.whatICanDo || ''}
               label="what I can do"
               multiline
               rows={2}
@@ -145,8 +143,8 @@ const TeacherProfil = ({
           <div className={classes.textField}>
             <TextField
               inputRef={register}
-              onChange={handlePhotoChange}
-              value={photo || ''}
+              onChange={handleChange}
+              value={state.photo || ''}
               label="photo"
               rows={2}
               fullWidth
@@ -158,19 +156,19 @@ const TeacherProfil = ({
           </div>
           <div className={classes.Checkbox}>
             <FormControlLabel
-              control={<Checkbox checked={categoriesList.maths} onChange={handleChange} name="maths" />}
+              control={<Checkbox checked={categoriesList.maths} onChange={handlecategoriesChange} name="maths" />}
               label="Maths"
             />
             <FormControlLabel
-              control={<Checkbox checked={categoriesList.physics} onChange={handleChange} name="physics" />}
+              control={<Checkbox checked={categoriesList.physics} onChange={handlecategoriesChange} name="physics" />}
               label="Physics"
             />
             <FormControlLabel
-              control={<Checkbox checked={categoriesList.arts} onChange={handleChange} name="arts" />}
+              control={<Checkbox checked={categoriesList.arts} onChange={handlecategoriesChange} name="arts" />}
               label="Arts"
             />
             <FormControlLabel
-              control={<Checkbox checked={categoriesList.english} onChange={handleChange} name="english" />}
+              control={<Checkbox checked={categoriesList.english} onChange={handlecategoriesChange} name="english" />}
               label="English"
             />
           </div>

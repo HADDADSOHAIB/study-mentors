@@ -48,7 +48,7 @@ const MakeBookingPage = ({
   const handleFromChange = date => setFrom(date);
   const handleToChange = date => setTo(date);
   const handleCategoryChange = e => setCategoryId(parseInt(e.target.value, 10));
-  const handleTypeChange = e => setType(e.target.value, 10);
+  const handleTypeChange = e => setType(e.target.value);
   const handleMakeBooking = () => {
     if (to.getHours() === from.getHours() && to.getMinutes() === from.getMinutes()) {
       setFlash({ open: true, message: 'the to and from fields should not be the same', severity: 'warning' });
