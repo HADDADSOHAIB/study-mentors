@@ -14,6 +14,9 @@ import {
   START_UPDATE_SESSION_TYPE,
   SUCCESS_UPDATE_SESSION_TYPE,
   ERROR_UPDATE_SESSION_TYPE,
+  START_SIGN_IN,
+  SUCCESS_SIGN_IN,
+  ERROR_SIGN_IN,
 } from './authTypes';
 
 const setUser = (currentUser, accountType, categories) => ({
@@ -142,6 +145,58 @@ const updateSessionType = (newSessionType, currentUser) => dispatch => {
   });
 };
 
+const startSignIn = () => ({
+  type: START_SIGN_IN,
+});
+
+const errorSignIn = error => ({
+  type: ERROR_SIGN_IN,
+  payload: {
+    error,
+  },
+});
+
+const successSignIn = () => ({
+  type: SUCCESS_SIGN_IN,
+});
+
+const signIn = (email, password, type) => dispatch => {
+  dispatch(startSignIn());
+  axios.post(`${BACKEND}/api/v1/login`, {
+    email,
+    password,
+    account_type: type,
+  }).then(res => {
+    localStorage.setItem('token_auth', res.data.access);
+    dispatch(setFlash({
+      message: 'Signed In successfully',
+      open: true,
+      severity: 'success',
+    }));
+    dispatch(setUser(
+      res.data.current_user,
+      type,
+      res.data.categories,
+    ));
+    dispatch(successSignIn());
+  }).catch(err => {
+    dispatch(errorSignIn(err));
+    if (err.response.data && err.response.data.message) {
+      dispatch(setFlash({
+        message: err.response.data.message,
+        open: true,
+        severity: 'error',
+      }));
+    } else {
+      dispatch(setFlash({
+        message: `Error, there is no ${type} account with this email`,
+        open: true,
+        severity: 'error',
+      }));
+    }
+  });
+};
+
 export {
   clearUser,
   setUser,
@@ -150,4 +205,5 @@ export {
   updateSchedule,
   updateProfil,
   updateSessionType,
+  signIn,
 };

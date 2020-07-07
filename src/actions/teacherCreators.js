@@ -1,5 +1,4 @@
 import axios from 'axios';
-import authHeader from '../authHeader';
 import BACKEND from '../backend';
 import {
   SELECT_CATEGORY,
@@ -9,6 +8,9 @@ import {
   START_FETCHING_TEACHERS,
   ERROR_FETCHING_TEACHERS,
   SUCCESS_FETCHING_TEACHERS,
+  START_FETCHING_SELECTED_TEACHER,
+  SUCCESS_FETCHING_SELECTED_TEACHER,
+  ERROR_FETCHING_SELECTED_TEACHER,
 } from './teacherTypes';
 
 const selectCategory = category => ({
@@ -50,9 +52,38 @@ const errorFetchingTeachers = error => ({
 
 const fetchTeachers = category => dispatch => {
   dispatch(startFetchingTeachers());
-  return axios.get(`${BACKEND}/api/v1/categories/${category}/teachers`, { headers: authHeader })
+  return axios.get(`${BACKEND}/api/v1/categories/${category}/teachers`,
+    { headers: { Authorization: `Bearer ${localStorage.getItem('token_auth')}` } })
     .then(res => dispatch(succesFetchingTeachers(res.data.teachers)))
     .catch(err => dispatch(errorFetchingTeachers(err)));
+};
+
+const startFetcheingSelectedTeacher = () => ({
+  type: START_FETCHING_SELECTED_TEACHER,
+});
+
+const errorFetcheingSelectedTeacher = error => ({
+  type: ERROR_FETCHING_SELECTED_TEACHER,
+  payload: {
+    error,
+  },
+});
+
+const successFetchingSelectedTeacher = (teacher, categories) => ({
+  type: SUCCESS_FETCHING_SELECTED_TEACHER,
+  payload: {
+    teacher,
+    categories,
+  },
+});
+
+const fetchSelectedTeacher = id => dispatch => {
+  dispatch(startFetcheingSelectedTeacher());
+  axios.get(`${BACKEND}/api/v1/teachers/${id}`)
+    .then(res => {
+      const { teacher, categories } = res.data;
+      dispatch(successFetchingSelectedTeacher(teacher, categories));
+    }).catch(err => dispatch(errorFetcheingSelectedTeacher(err)));
 };
 
 export {
@@ -64,4 +95,5 @@ export {
   startFetchingTeachers,
   succesFetchingTeachers,
   errorFetchingTeachers,
+  fetchSelectedTeacher,
 };

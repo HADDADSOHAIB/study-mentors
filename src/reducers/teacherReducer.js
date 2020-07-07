@@ -6,6 +6,9 @@ import {
   START_FETCHING_TEACHERS,
   SUCCESS_FETCHING_TEACHERS,
   ERROR_FETCHING_TEACHERS,
+  START_FETCHING_SELECTED_TEACHER,
+  ERROR_FETCHING_SELECTED_TEACHER,
+  SUCCESS_FETCHING_SELECTED_TEACHER,
 } from '../actions/teacherTypes';
 
 const INITIAL_STATE = {
@@ -15,6 +18,10 @@ const INITIAL_STATE = {
   fetchedDataCount: 20,
   error: null,
   dataLoading: false,
+  selectedTeacher: {
+    teacher: null,
+    categories: [],
+  },
 };
 
 const teacherReducer = (state = INITIAL_STATE, action) => {
@@ -45,6 +52,7 @@ const teacherReducer = (state = INITIAL_STATE, action) => {
         fetchedDataCount: state.fetchedDataCount + 20,
       };
     case START_FETCHING_TEACHERS:
+    case START_FETCHING_SELECTED_TEACHER:
       return {
         ...state,
         dataLoading: true,
@@ -56,10 +64,20 @@ const teacherReducer = (state = INITIAL_STATE, action) => {
         profils: payload.teachers,
       };
     case ERROR_FETCHING_TEACHERS:
+    case ERROR_FETCHING_SELECTED_TEACHER:
       return {
         ...state,
         dataLoading: false,
         error: payload.error,
+      };
+    case SUCCESS_FETCHING_SELECTED_TEACHER:
+      return {
+        ...state,
+        dataLoading: false,
+        selectedTeacher: {
+          teacher: payload.teacher,
+          categories: payload.categories,
+        },
       };
     default:
       return {

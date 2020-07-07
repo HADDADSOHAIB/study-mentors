@@ -11,6 +11,7 @@ import Paper from '@material-ui/core/Paper';
 import useStyles from './MainPageStyles';
 import TeacherCard from '../components/TeacherCard';
 import { increaseSelectedIndex, decreaseSelectedIndex, fetchTeachers } from '../actions/teacherCreators';
+import { clearRedirect } from '../actions/bookingCreators';
 
 function MainPage({
   profils,
@@ -20,10 +21,16 @@ function MainPage({
   selectedCategory,
   fetchTeachers,
   error,
+  clearRedirect,
 }) {
   const classes = useStyles();
   const [show, setShow] = useState([]);
   const [direction, setDirection] = useState('right');
+
+  useEffect(() => {
+    clearRedirect();
+    return () => '';
+  }, []);
 
   useEffect(() => {
     const newShow = [];
@@ -137,6 +144,7 @@ MainPage.propTypes = {
   fetchTeachers: PropTypes.func.isRequired,
   selectedCategory: PropTypes.string.isRequired,
   error: PropTypes.shape({}),
+  clearRedirect: PropTypes.func.isRequired,
 };
 
 MainPage.defaultProps = {
@@ -154,6 +162,7 @@ const mapDispatchToProps = dispatch => ({
   increaseSelectedIndex: () => dispatch(increaseSelectedIndex()),
   decreaseSelectedIndex: () => dispatch(decreaseSelectedIndex()),
   fetchTeachers: category => dispatch(fetchTeachers(category)),
+  clearRedirect: () => dispatch(clearRedirect()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainPage);

@@ -11,7 +11,13 @@ import {
   START_UPDATE_SESSION_TYPE,
   ERROR_UPDATE_SESSION_TYPE,
   SUCCESS_UPDATE_SESSION_TYPE,
+  START_SIGN_IN,
+  SUCCESS_SIGN_IN,
+  ERROR_SIGN_IN,
 } from '../actions/authTypes';
+import {
+  CLEAR_REDIRECT,
+} from '../actions/bookingTypes';
 
 const INITIAL_STATE = {
   loading: false,
@@ -19,6 +25,7 @@ const INITIAL_STATE = {
   accountType: '',
   categories: [],
   error: null,
+  redirect: false,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -37,6 +44,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case START_UPDATE_SCHEDULE:
     case START_UPDATE_PROFIL:
     case START_UPDATE_SESSION_TYPE:
+    case START_SIGN_IN:
       return {
         ...state,
         loading: true,
@@ -45,6 +53,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case ERROR_UPDATE_SCHEDULE:
     case ERROR_UPDATE_PROFIL:
     case ERROR_UPDATE_SESSION_TYPE:
+    case ERROR_SIGN_IN:
       return {
         ...state,
         error: payload.error,
@@ -56,6 +65,11 @@ const authReducer = (state = INITIAL_STATE, action) => {
         currentUser: {},
         accountType: '',
         categories: [],
+      };
+    case CLEAR_REDIRECT:
+      return {
+        ...state,
+        redirect: false,
       };
     case SET_SCHEDULE:
       return {
@@ -74,6 +88,12 @@ const authReducer = (state = INITIAL_STATE, action) => {
           ...state.currentUser,
           session_type: payload.sessionType,
         },
+      };
+    case SUCCESS_SIGN_IN:
+      return {
+        ...state,
+        loading: false,
+        redirect: true,
       };
     default:
       return {

@@ -5,7 +5,12 @@ import {
   START_FETCHING_MY_BOOKING,
   SUCCESS_FETCHING_MY_BOOKING,
   ERROR_FETCHING_MY_BOOKING,
+  START_MAKING_A_BOOKING,
+  SUCCESS_MAKING_A_BOOKING,
+  ERROR_MAKING_A_BOOKING,
+  CLEAR_REDIRECT,
 } from './bookingTypes';
+import { setFlash } from './layoutCreators';
 
 const startFetchingMyBooking = () => ({
   type: START_FETCHING_MY_BOOKING,
@@ -35,7 +40,37 @@ const fetchMyBooking = (currentUser, accountType) => dispatch => {
     .then(err => dispatch(errorFetchingMyBooking(err)));
 };
 
+const startMakingABooking = () => ({
+  type: START_MAKING_A_BOOKING,
+});
+
+const errorMakingABooking = error => ({
+  type: ERROR_MAKING_A_BOOKING,
+  payload: {
+    error,
+  },
+});
+
+const successMakingABooking = () => ({
+  type: SUCCESS_MAKING_A_BOOKING,
+});
+
+const makeABooking = booking => dispatch => {
+  dispatch(startMakingABooking());
+  axios.post(`${BACKEND}/api/v1/bookings`, booking,
+    { headers: { Authorization: `Bearer ${localStorage.getItem('token_auth')}` } })
+    .then(() => {
+      dispatch(successMakingABooking());
+      dispatch(setFlash({ open: true, message: 'Session booked successfuly', severity: 'success' }));
+    }).catch(err => dispatch(errorMakingABooking(err)));
+};
+
+const clearRedirect = () => ({
+  type: CLEAR_REDIRECT,
+});
+
 export {
   fetchMyBooking,
-  successFetchingMyBooking,
+  makeABooking,
+  clearRedirect,
 };

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import uid from 'uid';
@@ -21,23 +20,24 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
-import authHeader from '../authHeader';
 import makeStyle from './MakeBookingPageStyles';
-import BACKEND from '../backend';
 import { setFlash } from '../actions/layoutCreators';
+import { makeABooking } from '../actions/bookingCreators';
+import { fetchSelectedTeacher } from '../actions/teacherCreators';
 
 const MakeBookingPage = ({
   match,
   setFlash,
+  makeABooking,
   currentUser,
+  fetchSelectedTeacher,
+  selectedTeacher,
+  redirect,
   history,
 }) => {
   const classes = makeStyle();
-  const [teacher, setTeacher] = useState(null);
-  const [categories, setCategories] = useState(null);
   const [categoryId, setCategoryId] = useState('');
   const [type, setType] = useState('');
-
   const [to, setTo] = useState(new Date());
   const [from, setFrom] = useState(new Date());
 
@@ -57,40 +57,40 @@ const MakeBookingPage = ({
     } else if (!type) {
       setFlash({ open: true, message: 'Please, choose a type', severity: 'warning' });
     } else {
-      axios.post(`${BACKEND}/api/v1/bookings`, {
-        teacher_id: teacher.id,
+      const booking = {
+        teacher_id: selectedTeacher.teacher.id,
         student_id: currentUser.id,
         type,
         category_id: categoryId,
         from,
         to,
-      }, { headers: authHeader })
-        .then(() => {
-          setFlash({ open: true, message: 'Session booked successfuly', severity: 'success' });
-          history.push('/');
-        });
+      };
+      makeABooking(booking);
     }
   };
 
   useEffect(() => {
-    axios.get(`${BACKEND}/api/v1/teachers/${match.params.id}`)
-      .then(res => {
-        setTeacher(res.data.teacher);
-        setCategories(res.data.categories);
-      });
+    fetchSelectedTeacher(match.params.id);
     return () => '';
   }, []);
+
+  useEffect(() => {
+    if (redirect) {
+      history.push('/');
+    }
+    return () => '';
+  }, [redirect]);
 
   return (
     <div>
       {
-        teacher ? (
+        selectedTeacher.teacher ? (
           <div className={classes.root}>
             <div className={classes.info}>
               <Card className={classes.card}>
                 <AppBar position="static" classes={{ root: classes.appbar }}>
                   <Tabs value={0} centered>
-                    <Tab label={teacher && `Book with ${teacher.fullname}`} id="simple-tab-0" aria-controls="simple-tabpanel-0" />
+                    <Tab label={selectedTeacher.teacher && `Book with ${selectedTeacher.teacher.fullname}`} id="simple-tab-0" aria-controls="simple-tabpanel-0" />
                   </Tabs>
                 </AppBar>
                 <CardContent>
@@ -138,7 +138,7 @@ const MakeBookingPage = ({
                       onChange={handleCategoryChange}
                     >
                       {
-                        categories && categories
+                        selectedTeacher.categories && selectedTeacher.categories
                           .map(cat => (
                             <MenuItem key={uid(12)} value={cat.id}>
                               {cat.name}
@@ -155,7 +155,7 @@ const MakeBookingPage = ({
                       onChange={handleTypeChange}
                     >
                       {
-                        teacher && teacher.session_type
+                        selectedTeacher.teacher && selectedTeacher.teacher.session_type
                           .split(',')
                           .map(type => (
                             <MenuItem key={uid(12)} value={type}>
@@ -188,19 +188,34 @@ MakeBookingPage.propTypes = {
       id: PropTypes.string,
     }),
   }).isRequired,
+  makeABooking: PropTypes.func.isRequired,
   setFlash: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({
     id: PropTypes.number,
   }).isRequired,
-  history: PropTypes.shape([]).isRequired,
+  history: PropTypes.arrayOf(Object).isRequired,
+  fetchSelectedTeacher: PropTypes.func.isRequired,
+  selectedTeacher: PropTypes.shape({
+    teacher: PropTypes.shape({
+      id: PropTypes.number,
+      session_type: PropTypes.string,
+      fullname: PropTypes.string,
+    }),
+    categories: PropTypes.arrayOf(Object),
+  }).isRequired,
+  redirect: PropTypes.bool.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
+  makeABooking: booking => dispatch(makeABooking(booking)),
   setFlash: flash => dispatch(setFlash(flash)),
+  fetchSelectedTeacher: id => dispatch(fetchSelectedTeacher(id)),
 });
 
 const mapStateToProps = state => ({
   currentUser: state.auth.currentUser,
+  selectedTeacher: state.teacher.selectedTeacher,
+  redirect: state.booking.redirect,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MakeBookingPage);
