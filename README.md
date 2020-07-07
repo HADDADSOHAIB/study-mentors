@@ -4,7 +4,7 @@ A platform where students and teachers can book sessions, as a teacher you can s
 
 ### Video presentation:
 
-[![Video](/public/img/7.png)](https://www.loom.com/share/61a88d40464d4d1ebcb08e94358ae5d7)
+[![Video](/public/img/7.png)](https://www.loom.com/share/e9ec7a4bb8894f5a9b384d571d336a47)
 
 ### Live demo:
 
