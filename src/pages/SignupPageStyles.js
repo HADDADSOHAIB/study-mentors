@@ -19,9 +19,6 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     marginTop: 10,
   },
-  half: {
-    width: '50%',
-  },
   textField: {
     margin: '20px 0',
   },

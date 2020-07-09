@@ -126,14 +126,16 @@ const Signup = ({
                 name="password"
                 variant="outlined"
                 size="small"
-                className={classes.half}
                 error={!!errors.password}
                 inputRef={register({ required: true, minLength: 8 })}
                 required
+                fullWidth
                 value={state.password}
                 onChange={handleChange}
                 helperText={errors.password ? errorMessage(errors, 'password') : ''}
               />
+            </div>
+            <div className={classes.textField}>
               <TextField
                 inputRef={register({ required: true, validate: { match: shouldMatch } })}
                 required
@@ -142,9 +144,9 @@ const Signup = ({
                 type="password"
                 variant="outlined"
                 size="small"
+                fullWidth
                 error={!!errors.passwordConfirmation}
                 helperText={errors.passwordConfirmation ? errorMessage(errors, 'passwordConfirmation') : ''}
-                className={classes.half}
                 value={state.passwordConfirmation}
                 onChange={handleChange}
               />

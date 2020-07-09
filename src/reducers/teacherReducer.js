@@ -32,7 +32,6 @@ const teacherReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         selectedCategory: payload.category,
-        selectedProfilIndex: 0,
       };
     case INCREASE_SELECTED_INDEX:
       return {
@@ -62,6 +61,7 @@ const teacherReducer = (state = INITIAL_STATE, action) => {
         ...state,
         dataLoading: false,
         profils: payload.teachers,
+        selectedProfilIndex: 0,
       };
     case ERROR_FETCHING_TEACHERS:
     case ERROR_FETCHING_SELECTED_TEACHER:

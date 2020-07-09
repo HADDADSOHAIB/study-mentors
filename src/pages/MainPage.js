@@ -40,7 +40,7 @@ function MainPage({
     newShow[selectedProfilIndex] = true;
     setShow(newShow);
     return () => '';
-  }, [profils, selectedProfilIndex]);
+  }, [selectedProfilIndex]);
 
   useEffect(() => {
     fetchTeachers(selectedCategory.toLowerCase());
