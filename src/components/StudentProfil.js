@@ -75,7 +75,7 @@ const StudentProfil = ({
               value={state.phone || ''}
               onChange={handleChange}
               label="phone"
-              type="text"
+              type="tel"
               name="phone"
               variant="outlined"
               fullWidth
