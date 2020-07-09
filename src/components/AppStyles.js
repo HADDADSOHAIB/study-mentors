@@ -9,8 +9,8 @@ export default makeStyles(theme => ({
   menuButton: {
     marginRight: theme.spacing(2),
     position: 'absolute',
-    top: '0px',
-    left: '5px',
+    top: '5px',
+    left: '25px',
   },
   hide: {
     display: 'none',
